@@ -1,22 +1,25 @@
-import 'package:blog_beispiel/blog.dart';
+import 'package:blog_beispiel/models/blog.dart';
 
 List<Blog> blogs = [
   Blog(
+    id: 1,
     title: "Lorem ipsum",
     content: "Blabliblub",
-    date: "31.10.2025",
+    date: DateTime.now(),
     liked: false,
   ),
   Blog(
+    id: 22,
     title: "Lorem ipsum",
     content: "Blabliblub",
-    date: "31.10.2025",
+    date: DateTime.parse("2025-10-31"),
     liked: false,
   ),
   Blog(
+    id: 33,
     title: "Pause!!!!!!!!!!!!!!!!!!!!",
     content: "Blabliblub",
-    date: "31.10.2025",
+    date: DateTime.parse("2025-10-22"),
     liked: true,
   ),
 ];
