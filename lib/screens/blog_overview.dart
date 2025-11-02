@@ -13,12 +13,12 @@ class BlogOverview extends StatefulWidget {
 
 class _BlogOverviewState extends State<BlogOverview> {
   final blogService = BlogService();
-  late Future<List<Blog>> _blogsFuture;
+  late Stream<List<Blog>> _blogsStream;
 
   @override
   void initState() {
     super.initState();
-    _blogsFuture = blogService.getBlogs();
+    _blogsStream = blogService.getBlogs();
   }
 
   @override
@@ -30,8 +30,8 @@ class _BlogOverviewState extends State<BlogOverview> {
         title: Text("Blog overview"),
       ),
       body: Center(
-        child: FutureBuilder<List<Blog>>(
-          future: _blogsFuture,
+        child: StreamBuilder<List<Blog>>(
+          stream: _blogsStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -42,9 +42,11 @@ class _BlogOverviewState extends State<BlogOverview> {
               return ListView.builder(
                 itemCount: blogs.length,
                 itemBuilder: (context, index) {
+                  final Blog currentBlog = blogs[index];
                   return BlogCard(
-                    blog: blogs[index],
+                    blog: currentBlog,
                     dateFormatter: DateFormat('dd.MM.yyyy'),
+                    onLikeToggle: () => onToggleLikeStatus(currentBlog),
                   );
                 },
               );
@@ -64,6 +66,19 @@ class _BlogOverviewState extends State<BlogOverview> {
   }
 
   void onAddBlog() => {
-    // toDo: Add Blog Page hinzufügen
+    blogService.addBlog(
+      Blog(
+        id: 99,
+        title: "Neuester Blog",
+        content: "Neuer Inhalt im neuen Blog.",
+        date: DateTime.now(),
+        liked: false,
+      ),
+    ),
   };
+
+  void onToggleLikeStatus(Blog blog){
+    blog.liked = !blog.liked;
+    blogService.updateBlog(blog);
+  }
 }

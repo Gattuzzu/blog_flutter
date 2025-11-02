@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class BlogCard extends StatelessWidget {
-  const BlogCard({super.key, required this.blog, required this.dateFormatter});
+  const BlogCard({super.key, required this.blog, required this.dateFormatter, required this.onLikeToggle});
 
   final DateFormat dateFormatter;
   final Blog blog;
+  final VoidCallback onLikeToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,10 @@ class BlogCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(dateFormatter.format(blog.date)),
-                Icon(blog.liked ? Icons.favorite : Icons.heart_broken),
+                IconButton(
+                  icon: Icon(blog.liked ? Icons.favorite : Icons.heart_broken),
+                  onPressed: onLikeToggle,
+                ),
               ],
             ),
           ],
