@@ -1,6 +1,6 @@
 import 'package:blog_beispiel/models/blog.dart';
 
-List<Blog> blogs = [
+List<Blog> testBlogs = [
   Blog(
     id: 1,
     title: "Lorem ipsum",
@@ -25,5 +25,5 @@ List<Blog> blogs = [
 ];
 
 class BlogService {
-  List<Blog> getBlogs() => blogs;
+  List<Blog> getBlogs() => testBlogs;
 }

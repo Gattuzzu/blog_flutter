@@ -1,3 +1,4 @@
+import 'package:blog_beispiel/models/blog.dart';
 import 'package:blog_beispiel/screens/blog_card.dart';
 import 'package:blog_beispiel/services/blog_service.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ class BlogOverview extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final List<Blog> blogs = blogService.getBlogs();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -17,9 +19,11 @@ class BlogOverview extends StatelessWidget{
         title: Text("Blog overview"),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: blogService.getBlogs().map((item) => BlogCard(blog: item, dateFormatter: DateFormat('dd.MM.yyyy'))).toList(),
+        child: ListView.builder(
+          itemCount: blogs.length,
+          itemBuilder: (context, index) {
+            return BlogCard(blog: blogs[index], dateFormatter: DateFormat('dd.MM.yyyy'));
+          },
         ),
       ),
 
