@@ -1,6 +1,4 @@
-import 'package:blog_beispiel/models/blog.dart';
 import 'package:blog_beispiel/screens/blog_overview.dart';
-import 'package:blog_beispiel/services/blog_service.dart';
 import 'package:flutter/material.dart';
 
 void main() {
