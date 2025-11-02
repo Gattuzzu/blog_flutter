@@ -25,5 +25,5 @@ List<Blog> testBlogs = [
 ];
 
 class BlogService {
-  List<Blog> getBlogs() => testBlogs;
+  Future<List<Blog>> getBlogs() async => await Future.delayed(const Duration(seconds: 2), () => testBlogs);
 }
