@@ -1,5 +1,6 @@
 import 'package:blog_beispiel/models/blog.dart';
 import 'package:blog_beispiel/screens/blog_card.dart';
+import 'package:blog_beispiel/screens/navigation.dart';
 import 'package:blog_beispiel/services/blog_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -62,6 +63,8 @@ class _BlogOverviewState extends State<BlogOverview> {
         tooltip: 'Add Blog',
         child: const Icon(Icons.add),
       ),
+
+      drawer: Navigation(),
     );
   }
 
