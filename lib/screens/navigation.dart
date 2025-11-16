@@ -1,4 +1,5 @@
 import 'package:blog_beispiel/models/language.dart';
+import 'package:blog_beispiel/screens/second_screen.dart';
 import 'package:blog_beispiel/services/language_service.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,10 @@ class Navigation extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(height: 15),
-          TextButton(onPressed: onPressed, child: Text("Overview")),
-          TextButton(onPressed: onPressed, child: Text("New Blog Entry")),
-          TextButton(onPressed: onPressed, child: Text("Login")),
+          TextButton(onPressed: () => onPressed(context, "Overview"), child: Text("Overview")),
+          TextButton(onPressed: () => onPressed(context, "New Blog Entry"), child: Text("New Blog Entry")
+          ),
+          TextButton(onPressed: () => onPressed(context, "Login"), child: Text("Login")),
           Expanded(
             child: Container()
           ),
@@ -26,7 +28,7 @@ class Navigation extends StatelessWidget {
             children: List.generate(languageList.length, (index) {
               final language = languageList[index];
               return IconButton(
-                onPressed: onPressed, 
+                onPressed: () => onPressed(context, language.name), 
                 icon: CountryFlag.fromCountryCode(
                   language.countryCode, 
                   theme: const ImageTheme(
@@ -40,5 +42,10 @@ class Navigation extends StatelessWidget {
         ]));
   }
 
-  onPressed() => {};
+  onPressed(context, String title) => {
+    Navigator.push(
+      context, 
+      MaterialPageRoute(builder: (context) => SecondScreen(title: title))
+    )
+  };
 }
