@@ -1,8 +1,9 @@
 import 'package:blog_beispiel/models/language.dart';
-import 'package:blog_beispiel/screens/second_screen.dart';
+import 'package:blog_beispiel/services/app_routes.dart';
 import 'package:blog_beispiel/services/language_service.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class Navigation extends StatelessWidget {
   final List<Language> languageList = LanguageService().getLanguages();
@@ -16,10 +17,10 @@ class Navigation extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(height: 15),
-          TextButton(onPressed: () => onPressed(context, "Overview"), child: Text("Overview")),
-          TextButton(onPressed: () => onPressed(context, "New Blog Entry"), child: Text("New Blog Entry")
+          TextButton(onPressed: () => context.push(AppRoutes.blogOverview), child: Text("Overview")),
+          TextButton(onPressed: () => context.push(AppRoutes.addBlog), child: Text("New Blog Entry")
           ),
-          TextButton(onPressed: () => onPressed(context, "Login"), child: Text("Login")),
+          TextButton(onPressed: () => context.push(AppRoutes.login), child: Text("Login")),
           Expanded(
             child: Container()
           ),
@@ -28,7 +29,7 @@ class Navigation extends StatelessWidget {
             children: List.generate(languageList.length, (index) {
               final language = languageList[index];
               return IconButton(
-                onPressed: () => onPressed(context, language.name), 
+                onPressed: () => context.push(AppRoutes.secondScreen), 
                 icon: CountryFlag.fromCountryCode(
                   language.countryCode, 
                   theme: const ImageTheme(
@@ -41,11 +42,4 @@ class Navigation extends StatelessWidget {
           SizedBox(height: 10)
         ]));
   }
-
-  onPressed(context, String title) => {
-    Navigator.push(
-      context, 
-      MaterialPageRoute(builder: (context) => SecondScreen(title: title))
-    )
-  };
 }

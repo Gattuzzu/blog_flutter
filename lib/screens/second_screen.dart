@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SecondScreen extends StatelessWidget {
   final String title;
@@ -14,12 +15,10 @@ class SecondScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(padding: EdgeInsets.all(20)),
-          onPressed: () => {onPressed(context)},
+          onPressed: () => {context.pop()},
           child: Text("Last Screen"),
           )
       )
     );
   }
-  
-  onPressed(context) => {Navigator.pop(context)};
 }
