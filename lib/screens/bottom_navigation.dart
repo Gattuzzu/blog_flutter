@@ -12,7 +12,7 @@ class BottomNavigation extends StatelessWidget{
     return Scaffold(
       body: child,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _calculateSelectedIndey(context),
+        currentIndex: _calculateSelectedIndex(context),
         onTap: (index) => _onItemTapped(index, context),
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Overview"),
@@ -23,7 +23,7 @@ class BottomNavigation extends StatelessWidget{
     );
   }
 
-  static int _calculateSelectedIndey(BuildContext context){
+  static int _calculateSelectedIndex(BuildContext context){
     final String location = GoRouterState.of(context).uri.path;
     return switch(location){
       AppRoutes.blogOverview => 0,
