@@ -4,19 +4,16 @@ import 'package:blog_beispiel/models/blog.dart';
 
 List<Blog> testBlogs = [
   Blog(
-    id: 1,
     title: "Lorem ipsum",
     content: "Blabliblub",
     publishedAt: DateTime.now(),
   ),
   Blog(
-    id: 22,
     title: "Lorem ipsum",
     content: "Blabliblub",
     publishedAt: DateTime.parse("2025-10-31"),
   ),
   Blog(
-    id: 33,
     title: "Pause!!!!!!!!!!!!!!!!!!!!",
     content: "Blabliblub",
     publishedAt: DateTime.parse("2025-10-22"),
@@ -62,7 +59,7 @@ class BlogRepository {
       _initializeBlogs();
     }
 
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     return _blogs..sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
   }
