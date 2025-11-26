@@ -1,7 +1,7 @@
 
 import 'package:blog_beispiel/models/blog.dart';
 import 'package:blog_beispiel/services/app_routes.dart';
-import 'package:blog_beispiel/services/blog_service.dart';
+import 'package:blog_beispiel/services/blog_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,7 +14,7 @@ class AddBlog extends StatefulWidget {
 
 class _AddBlogState extends State<AddBlog>{
   final formKey = GlobalKey<FormState>();
-  final service = BlogService();
+  final blogRepository = BlogRepository.instance;
 
   String _title = "";
   String _content = "";
@@ -89,12 +89,10 @@ class _AddBlogState extends State<AddBlog>{
           if (isValid){
             FocusScope.of(context).unfocus();
             formKey.currentState!.save();
-            service.addBlog(Blog(
-              id: 99,
+            blogRepository.addBlogPost(Blog(
               title: _title,
               content: _content,
               publishedAt: DateTime.now(),
-              isLikedByMe: false,
             ));
             context.push(AppRoutes.blogOverview);
           }

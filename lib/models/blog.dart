@@ -3,13 +3,12 @@ class Blog {
   String title;
   String content;
   DateTime publishedAt;
-  bool isLikedByMe;
+  bool isLikedByMe = false;
 
   Blog({
-    required this.id,
+    this.id = 0,
     required this.title,
     required this.content,
     required this.publishedAt,
-    required this.isLikedByMe,
   });
 }

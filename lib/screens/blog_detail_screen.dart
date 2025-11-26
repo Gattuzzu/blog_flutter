@@ -1,11 +1,11 @@
 import 'package:blog_beispiel/models/blog.dart';
 import 'package:blog_beispiel/screens/blog_card.dart';
-import 'package:blog_beispiel/services/blog_service.dart';
+import 'package:blog_beispiel/services/blog_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class BlogDetailScreen extends StatelessWidget{
-  final blogService = BlogService();
+  final blogRepository = BlogRepository.instance;
   final Blog blog;
 
   BlogDetailScreen({super.key, required this.blog});
@@ -21,7 +21,7 @@ class BlogDetailScreen extends StatelessWidget{
 
   void onToggleLikeStatus(Blog blog){
     blog.isLikedByMe = !blog.isLikedByMe;
-    blogService.updateBlog(blog);
+    blogRepository.toggleLikeInfo(blog.id);
   }
   
 }

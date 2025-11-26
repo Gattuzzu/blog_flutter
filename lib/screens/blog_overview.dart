@@ -2,7 +2,7 @@ import 'package:blog_beispiel/models/blog.dart';
 import 'package:blog_beispiel/screens/blog_card.dart';
 import 'package:blog_beispiel/screens/navigation.dart';
 import 'package:blog_beispiel/services/app_routes.dart';
-import 'package:blog_beispiel/services/blog_service.dart';
+import 'package:blog_beispiel/services/blog_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -15,13 +15,13 @@ class BlogOverview extends StatefulWidget {
 }
 
 class _BlogOverviewState extends State<BlogOverview> {
-  final blogService = BlogService();
-  late Stream<List<Blog>> _blogsStream;
+  final blogRepository = BlogRepository.instance;
+  late Future<List<Blog>> _blogs;
 
   @override
   void initState() {
     super.initState();
-    _blogsStream = blogService.getBlogs();
+    _blogs = blogRepository.getBlogPosts();
   }
 
   @override
@@ -33,8 +33,8 @@ class _BlogOverviewState extends State<BlogOverview> {
         title: Text("Blog overview"),
       ),
       body: Center(
-        child: StreamBuilder<List<Blog>>(
-          stream: _blogsStream,
+        child: FutureBuilder<List<Blog>>(
+          future: _blogs,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -72,20 +72,18 @@ class _BlogOverviewState extends State<BlogOverview> {
   }
 
   void _onAddBlog() => {
-    blogService.addBlog(
+    blogRepository.addBlogPost(
       Blog(
-        id: 99,
         title: "Neuester Blog",
         content: "Neuer Inhalt im neuen Blog.",
         publishedAt: DateTime.now(),
-        isLikedByMe: false,
       ),
     ),
   };
 
   void _onToggleLikeStatus(Blog blog){
     blog.isLikedByMe = !blog.isLikedByMe;
-    blogService.updateBlog(blog);
+    blogRepository.toggleLikeInfo(blog.id);
   }
 
   void _onBlogTap(BuildContext context, Blog blog){
