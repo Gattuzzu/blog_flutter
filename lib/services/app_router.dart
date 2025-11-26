@@ -1,11 +1,14 @@
-import 'package:blog_beispiel/models/blog.dart';
-import 'package:blog_beispiel/screens/add_blog.dart';
-import 'package:blog_beispiel/screens/blog_detail_screen.dart';
-import 'package:blog_beispiel/screens/blog_overview.dart';
+import 'package:blog_beispiel/screens/add_blog/add_blog_view_model.dart';
+import 'package:blog_beispiel/screens/blog_detail/blog_detail_screen.dart';
+import 'package:blog_beispiel/screens/blog_detail/blog_detail_view_model.dart';
+import 'package:blog_beispiel/screens/blog_overview/blog_overview_model.dart';
+import 'package:blog_beispiel/screens/add_blog/add_blog.dart';
+import 'package:blog_beispiel/screens/blog_overview/blog_overview.dart';
 import 'package:blog_beispiel/screens/bottom_navigation.dart';
 import 'package:blog_beispiel/screens/second_screen.dart';
 import 'package:blog_beispiel/services/app_routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: AppRoutes.home, // Startseite
@@ -24,18 +27,33 @@ final GoRouter appRouter = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.addBlog, 
-          pageBuilder: (context, state) => const NoTransitionPage(child: AddBlog()),
+          pageBuilder: (context, state) => NoTransitionPage(child: ChangeNotifierProvider(
+            create: (_) => AddBlogViewModel(),
+            child: AddBlog()
+            )
+          ),
         ),
         GoRoute(
           path: AppRoutes.blogOverview,
-          pageBuilder: (context, state) => const NoTransitionPage(child: BlogOverview()),
+          pageBuilder: (context, state) => NoTransitionPage(
+            child: ChangeNotifierProvider(
+              create: (_) => BlogOverviewModel(),
+              child: const BlogOverview()
+            ),
+          ),
           routes: [
             GoRoute(
               path: AppRoutes.blogDetail,
-              pageBuilder: (context, state){
-                final blog = state.extra as Blog;
-                return NoTransitionPage(child: BlogDetailScreen(blog: blog));
-              },
+              pageBuilder: (context, state) {
+                final idString = state.pathParameters['id'];
+                final blogId = int.tryParse(idString ?? '') ?? 0;
+                return NoTransitionPage(
+                  child: ChangeNotifierProvider(
+                    create: (_) => BlogDetailViewModel(blogId: blogId),
+                    child: BlogDetailScreen(blogId: blogId)
+                  )
+                );
+              }
             ),
           ],
         ),

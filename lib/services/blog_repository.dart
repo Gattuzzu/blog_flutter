@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:blog_beispiel/models/blog.dart';
+import 'package:flutter/material.dart';
 
 List<Blog> testBlogs = [
   Blog(
@@ -35,7 +36,7 @@ List<Blog> testBlogs = [
   ),
 ];
 
-class BlogRepository {
+class BlogRepository extends ChangeNotifier {
   // Static instance + private Constructor for simple Singleton-approach
   static BlogRepository instance = BlogRepository._privateConstructor();
   BlogRepository._privateConstructor();
@@ -64,21 +65,38 @@ class BlogRepository {
     return _blogs..sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
   }
 
+  // Gibt nur den gewünschten Blog zurück
+  Future<Blog> getBlogPost(int blogId) async {
+    if (!_isInitialized) {
+      _initializeBlogs();
+    }
+
+    await Future.delayed(const Duration(milliseconds: 1000));
+
+    return _blogs.firstWhere((blog) => blog.id == blogId);
+  }
+
   /// Creates a new blog post and sets a new id.
   Future<void> addBlogPost(Blog blog) async {
     blog.id = _nextId++;
     _blogs.add(blog);
+
+    notifyListeners();
   }
 
   /// Deletes a blog post.
   Future<void> deleteBlogPost(Blog blog) async {
     _blogs.remove(blog);
+
+    notifyListeners();
   }
 
   /// Changes the like info of a blog post.
   Future<void> toggleLikeInfo(int blogId) async {
     final blog = _blogs.firstWhere((blog) => blog.id == blogId);
     blog.isLikedByMe = !blog.isLikedByMe;
+
+    notifyListeners();
   }
 
   /// Updates a blog post with the given id.
@@ -89,5 +107,7 @@ class BlogRepository {
     final blog = _blogs.firstWhere((blog) => blog.id == blogId);
     blog.title = title;
     blog.content = content;
+
+    notifyListeners();
   }
 }
