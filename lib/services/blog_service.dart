@@ -7,22 +7,22 @@ List<Blog> testBlogs = [
     id: 1,
     title: "Lorem ipsum",
     content: "Blabliblub",
-    date: DateTime.now(),
-    liked: false,
+    publishedAt: DateTime.now(),
+    isLikedByMe: false,
   ),
   Blog(
     id: 22,
     title: "Lorem ipsum",
     content: "Blabliblub",
-    date: DateTime.parse("2025-10-31"),
-    liked: false,
+    publishedAt: DateTime.parse("2025-10-31"),
+    isLikedByMe: false,
   ),
   Blog(
     id: 33,
     title: "Pause!!!!!!!!!!!!!!!!!!!!",
     content: "Blabliblub",
-    date: DateTime.parse("2025-10-22"),
-    liked: true,
+    publishedAt: DateTime.parse("2025-10-22"),
+    isLikedByMe: true,
   ),
 ];
 

@@ -93,8 +93,8 @@ class _AddBlogState extends State<AddBlog>{
               id: 99,
               title: _title,
               content: _content,
-              date: DateTime.now(),
-              liked: false,
+              publishedAt: DateTime.now(),
+              isLikedByMe: false,
             ));
             context.push(AppRoutes.blogOverview);
           }

@@ -77,14 +77,14 @@ class _BlogOverviewState extends State<BlogOverview> {
         id: 99,
         title: "Neuester Blog",
         content: "Neuer Inhalt im neuen Blog.",
-        date: DateTime.now(),
-        liked: false,
+        publishedAt: DateTime.now(),
+        isLikedByMe: false,
       ),
     ),
   };
 
   void _onToggleLikeStatus(Blog blog){
-    blog.liked = !blog.liked;
+    blog.isLikedByMe = !blog.isLikedByMe;
     blogService.updateBlog(blog);
   }
 

@@ -26,9 +26,9 @@ class BlogCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(dateFormatter.format(blog.date)),
+                  Text(dateFormatter.format(blog.publishedAt)),
                   IconButton(
-                    icon: Icon(blog.liked ? Icons.favorite : Icons.heart_broken),
+                    icon: Icon(blog.isLikedByMe ? Icons.favorite : Icons.heart_broken),
                     onPressed: onLikeToggle,
                   ),
                 ],

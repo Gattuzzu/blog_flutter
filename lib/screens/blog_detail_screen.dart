@@ -20,7 +20,7 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   void onToggleLikeStatus(Blog blog){
-    blog.liked = !blog.liked;
+    blog.isLikedByMe = !blog.isLikedByMe;
     blogService.updateBlog(blog);
   }
   
