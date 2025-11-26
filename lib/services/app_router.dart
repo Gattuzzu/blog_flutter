@@ -1,4 +1,5 @@
 import 'package:blog_beispiel/models/blog.dart';
+import 'package:blog_beispiel/screens/add_blog.dart';
 import 'package:blog_beispiel/screens/blog_detail_screen.dart';
 import 'package:blog_beispiel/screens/blog_overview.dart';
 import 'package:blog_beispiel/screens/bottom_navigation.dart';
@@ -23,7 +24,7 @@ final GoRouter appRouter = GoRouter(
         ),
         GoRoute(
           path: AppRoutes.addBlog, 
-          pageBuilder: (context, state) => const NoTransitionPage(child: SecondScreen(title: "Add Blog")),
+          pageBuilder: (context, state) => const NoTransitionPage(child: AddBlog()),
         ),
         GoRoute(
           path: AppRoutes.blogOverview,
