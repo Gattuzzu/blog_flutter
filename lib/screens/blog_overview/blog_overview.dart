@@ -19,6 +19,16 @@ class BlogOverview extends StatelessWidget{
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
         title: Text("Blog overview"),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Image.asset(
+              'assets/images/logo.png',
+              width: 40,
+              height: 40,
+            ),
+          ),
+        ],
       ),
       body: FocusDetector(
         onFocusGained: () => blogOverviewModel.readBlogsWithLoadingState(),
