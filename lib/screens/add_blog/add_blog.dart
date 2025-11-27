@@ -1,23 +1,10 @@
-
-import 'package:blog_beispiel/models/blog.dart';
 import 'package:blog_beispiel/screens/add_blog/add_blog_view_model.dart';
-import 'package:blog_beispiel/services/app_routes.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class AddBlog extends StatefulWidget {
+class AddBlog extends StatelessWidget{
+  
   const AddBlog({super.key});
-
-  @override
-  State<AddBlog> createState() => _AddBlogState();
-}
-
-class _AddBlogState extends State<AddBlog>{
-  final formKey = GlobalKey<FormState>();
-
-  String _title = "";
-  String _content = "";
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +15,7 @@ class _AddBlogState extends State<AddBlog>{
         body: Stack(
           children: [
             Form(
-              key: formKey,
+              key: addBlogViewModel.formKey,
               autovalidateMode: AutovalidateMode.onUnfocus,
               child: ListView(
                 children: [
@@ -40,9 +27,13 @@ class _AddBlogState extends State<AddBlog>{
                 ],
               )
             ),
-            if(addBlogViewModel.isLoading)
+            if(addBlogViewModel.pageState == AddBlogPageState.loading)
               Center(
                 child: CircularProgressIndicator(),
+              )
+            else if(addBlogViewModel.pageState == AddBlogPageState.done)
+              Center(
+                child: Text("Blog created!"),  
               )
           ],
         ) 
@@ -52,26 +43,20 @@ class _AddBlogState extends State<AddBlog>{
 
   Widget buildTitle(AddBlogViewModel addBlogViewModel){
     return TextFormField(
-      enabled: !addBlogViewModel.isLoading,
+      enabled: addBlogViewModel.pageState == AddBlogPageState.editing,
       decoration: InputDecoration(
         labelText: "Title",
         border: OutlineInputBorder(),
       ),
       // autovalidateMode: AutovalidateMode.onUnfocus,
-      validator: (value){
-        if(value == null || value.length < 4){
-          return "Enter at least 4 characters";
-        } else {
-          return null;
-        }
-      },
-      onSaved: (value) => setState(() => _title = value!),
+      validator: addBlogViewModel.titleValidator,
+      onSaved: addBlogViewModel.setTitle,
     );
   }
 
   Widget buildContent(AddBlogViewModel addBlogViewModel){
     return TextFormField(
-      enabled: !addBlogViewModel.isLoading,
+      enabled: addBlogViewModel.pageState == AddBlogPageState.editing,
       decoration: InputDecoration(
         labelText: "Content",
         border: OutlineInputBorder(),
@@ -79,39 +64,15 @@ class _AddBlogState extends State<AddBlog>{
       minLines: 5,
       maxLines: 20,
       // autovalidateMode: AutovalidateMode.onUnfocus,
-      validator: (value) {
-        if(value == null || value.length < 10){
-          return "Enter at least 10 characters";
-        } else {
-          return null;
-        }
-      },
-      onSaved: (value) => setState(() => _content = value!),
+      validator: addBlogViewModel.contentValidator,
+      onSaved: addBlogViewModel.setContent,
     );
   }
 
   Widget buildSubmitButton(BuildContext context, AddBlogViewModel addBlogViewModel) {
     return FloatingActionButton(
-      backgroundColor: addBlogViewModel.isLoading ? Theme.of(context).colorScheme.inversePrimary : Theme.of(context).colorScheme.primaryContainer,
-      onPressed: addBlogViewModel.isLoading ? null : () async {
-        if (formKey.currentState != null)
-        {
-          final isValid = formKey.currentState!.validate();
-          if (isValid){
-            FocusScope.of(context).unfocus();
-            formKey.currentState!.save();
-            await addBlogViewModel.addBlog(Blog(
-              title: _title,
-              content: _content,
-              publishedAt: DateTime.now(),
-            ), context);
-
-            if(!context.mounted) return; // Bevor man eine weiterleitung machen kann, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
-          
-            context.push(AppRoutes.blogOverview);
-          }
-        }
-      },
+      backgroundColor: addBlogViewModel.pageState == AddBlogPageState.editing ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).colorScheme.inversePrimary,
+      onPressed: () => addBlogViewModel.onSave(context),
       child: Text("Submit"),
     );
   }

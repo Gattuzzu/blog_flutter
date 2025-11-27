@@ -29,7 +29,7 @@ final GoRouter appRouter = GoRouter(
           path: AppRoutes.addBlog, 
           pageBuilder: (context, state) => NoTransitionPage(child: ChangeNotifierProvider(
             create: (_) => AddBlogViewModel(),
-            child: AddBlog()
+            child: const AddBlog()
             )
           ),
         ),
