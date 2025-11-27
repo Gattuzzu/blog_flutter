@@ -3,23 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BottomNavigation extends StatelessWidget{
-  final Widget child;
 
-  const BottomNavigation({super.key, required this.child});
+  const BottomNavigation({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _calculateSelectedIndex(context),
-        onTap: (index) => _onItemTapped(index, context),
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Overview"),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add"),
-          BottomNavigationBarItem(icon: Icon(Icons.keyboard_return), label: "Back")
-        ]
-      ),
+    return BottomNavigationBar(
+      currentIndex: _calculateSelectedIndex(context),
+      onTap: (index) => _onItemTapped(index, context),
+      items: [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Overview"),
+        BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add"),
+        BottomNavigationBarItem(icon: Icon(Icons.keyboard_return), label: "Back")
+      ]
     );
   }
 

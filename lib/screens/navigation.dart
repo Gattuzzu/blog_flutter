@@ -13,14 +13,13 @@ class Navigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-
       child: Column(
         children: [
           SizedBox(height: 15),
-          TextButton(onPressed: () => context.push(AppRoutes.blogOverview), child: Text("Overview")),
-          TextButton(onPressed: () => context.push(AppRoutes.addBlog), child: Text("New Blog Entry")
+          TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.blogOverview), child: Text("Overview")),
+          TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.addBlog), child: Text("New Blog Entry")
           ),
-          TextButton(onPressed: () => context.push(AppRoutes.login), child: Text("Login")),
+          TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.login), child: Text("Login")),
           Expanded(
             child: Container()
           ),
@@ -29,7 +28,7 @@ class Navigation extends StatelessWidget {
             children: List.generate(languageList.length, (index) {
               final language = languageList[index];
               return IconButton(
-                onPressed: () => context.push(AppRoutes.secondScreen), 
+                onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.secondScreen), 
                 icon: CountryFlag.fromCountryCode(
                   language.countryCode, 
                   theme: const ImageTheme(
@@ -40,6 +39,13 @@ class Navigation extends StatelessWidget {
             }),
           ),
           SizedBox(height: 10)
-        ]));
+        ]
+      )
+    );
+  }
+
+  void closeDrawerAndPushRoute(BuildContext context, String route){
+    Scaffold.of(context).closeDrawer();
+    context.push(route);
   }
 }

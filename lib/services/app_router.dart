@@ -5,8 +5,10 @@ import 'package:blog_beispiel/screens/blog_overview/blog_overview_model.dart';
 import 'package:blog_beispiel/screens/add_blog/add_blog.dart';
 import 'package:blog_beispiel/screens/blog_overview/blog_overview.dart';
 import 'package:blog_beispiel/screens/bottom_navigation.dart';
+import 'package:blog_beispiel/screens/navigation.dart';
 import 'package:blog_beispiel/screens/second_screen.dart';
 import 'package:blog_beispiel/services/app_routes.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +18,27 @@ final GoRouter appRouter = GoRouter(
     // Alle vorhanden Routen hier definieren
     ShellRoute(
       builder: (context, state, child){
-        return BottomNavigation(child: child);
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+
+            title: Text("Gattus Blog"),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  width: 40,
+                  height: 40,
+                ),
+              ),
+            ],
+          ),
+          body: child,
+          
+          drawer: Navigation(),
+          bottomNavigationBar: const BottomNavigation(),
+        );
       },
       routes: [
         GoRoute(
