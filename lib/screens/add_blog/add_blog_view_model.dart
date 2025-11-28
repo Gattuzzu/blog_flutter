@@ -18,21 +18,8 @@ class AddBlogViewModel extends ChangeNotifier {
   AddBlogViewModel();
 
   // Form Validatoren 
-  String? titleValidator(String? value){
-    if(value == null || value.length < 4){
-      return "Enter at least 4 characters";
-    } else {
-      return null;
-    }
-  }
-
-  String? contentValidator(String? value){
-    if(value == null || value.length < 10){
-      return "Enter at least 10 characters";
-    } else {
-      return null;
-    }
-  }
+  String? titleValidator(String? value) => Blog.titleValidator(value);
+  String? contentValidator(String? value) => Blog.contentValidator(value);
 
   Future<void> onSave(BuildContext context) async {
     if(_pageState == AddBlogPageState.loading){

@@ -102,11 +102,12 @@ class BlogRepository extends ChangeNotifier {
   /// Updates a blog post with the given id.
   Future<void> updateBlogPost(
       {required int blogId,
-      required String title,
-      required String content}) async {
+      required String? title,
+      required String? content}) async {
     final blog = _blogs.firstWhere((blog) => blog.id == blogId);
-    blog.title = title;
-    blog.content = content;
+
+    if(title != null){ blog.title = title; }
+    if(content != null){ blog.content = content; }
 
     notifyListeners();
   }
