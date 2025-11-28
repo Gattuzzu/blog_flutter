@@ -24,6 +24,7 @@ class BlogOverview extends StatelessWidget{
         },
         child: Center(
           child: Stack(
+            fit: StackFit.expand,
             children: [
               if (blogOverviewModel.blogs.isEmpty && !blogOverviewModel.isLoading)
                 const Center(child: Text("No Blogs available"))
@@ -43,6 +44,14 @@ class BlogOverview extends StatelessWidget{
                 ),
               if (blogOverviewModel.isLoading)
                 const Center(child: CircularProgressIndicator()),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: FloatingActionButton(
+                  onPressed: () => _onAddBlog(context),
+                  child: const Icon(Icons.add),
+                )
+              )
             ],
           )
         )
