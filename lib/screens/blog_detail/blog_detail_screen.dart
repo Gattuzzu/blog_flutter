@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class BlogDetailScreen extends StatelessWidget{
-  final int blogId;
+  final String blogId;
 
   const BlogDetailScreen({super.key, required this.blogId});
   

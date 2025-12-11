@@ -30,7 +30,7 @@ class BlogOverviewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> toggleLike(int blogId) async {
+  Future<void> toggleLike(String blogId) async {
     await BlogRepository.instance.toggleLikeInfo(blogId);
     await readBlogsWithLoadingState();
   }

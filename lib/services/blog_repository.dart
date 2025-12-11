@@ -66,7 +66,7 @@ class BlogRepository extends ChangeNotifier {
   }
 
   // Gibt nur den gewünschten Blog zurück
-  Future<Blog> getBlogPost(int blogId) async {
+  Future<Blog> getBlogPost(String blogId) async {
     if (!_isInitialized) {
       _initializeBlogs();
     }
@@ -92,7 +92,7 @@ class BlogRepository extends ChangeNotifier {
   }
 
   /// Changes the like info of a blog post.
-  Future<void> toggleLikeInfo(int blogId) async {
+  Future<void> toggleLikeInfo(String blogId) async {
     final blog = _blogs.firstWhere((blog) => blog.id == blogId);
     blog.isLikedByMe = !blog.isLikedByMe;
 
@@ -101,9 +101,10 @@ class BlogRepository extends ChangeNotifier {
 
   /// Updates a blog post with the given id.
   Future<void> updateBlogPost(
-      {required int blogId,
+      {required String blogId,
       required String? title,
       required String? content}) async {
+
     final blog = _blogs.firstWhere((blog) => blog.id == blogId);
 
     if(title != null){ blog.title = title; }

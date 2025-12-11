@@ -12,5 +12,5 @@ class AppRoutes {
   static const String blogDetail = "/:id"; // mit dem :id weiss GoRouter, dass dies eine Variable ist und die Variable id heisst. Dies wird benötigt, da es auch mehrere Variablen in einem Pfad geben könnte.
 
   // Helper-Methoden für Navigation
-  static String toBlogDetail(int id) => '/blog/$id';
+  static String toBlogDetail(String id) => '/blog/$id';
 }

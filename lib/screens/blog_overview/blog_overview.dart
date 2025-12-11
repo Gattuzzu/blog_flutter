@@ -61,5 +61,5 @@ class BlogOverview extends StatelessWidget{
 
   void _onAddBlog(BuildContext context) => context.push(AppRoutes.addBlog);
 
-  void _onBlogTap(BuildContext context, int blogId) => context.push(AppRoutes.toBlogDetail(blogId), extra: blogId);
+  void _onBlogTap(BuildContext context, String blogId) => context.push(AppRoutes.toBlogDetail(blogId), extra: blogId);
 }

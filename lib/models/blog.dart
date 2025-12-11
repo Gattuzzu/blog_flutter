@@ -1,12 +1,12 @@
 class Blog {
-  int id;
+  String id;
   String title;
   String content;
   DateTime publishedAt;
   bool isLikedByMe = false;
 
   Blog({
-    this.id = 0,
+    this.id = "0",
     required this.title,
     required this.content,
     required this.publishedAt,

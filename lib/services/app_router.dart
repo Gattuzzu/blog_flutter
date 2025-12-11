@@ -67,11 +67,10 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: AppRoutes.blogDetail,
               pageBuilder: (context, state) {
-                final idString = state.pathParameters['id'];
-                final blogId = int.tryParse(idString ?? '') ?? 0;
+                final blogId = state.pathParameters['id'] ?? '';
                 return NoTransitionPage(
                   child: ChangeNotifierProvider(
-                    create: (_) => BlogDetailViewModel(blogId: blogId),
+                    create: (_) => BlogDetailViewModel(blogId: (blogId).toString()),
                     child: BlogDetailScreen(blogId: blogId)
                   )
                 );

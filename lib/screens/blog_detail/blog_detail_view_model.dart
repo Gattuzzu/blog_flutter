@@ -45,11 +45,11 @@ class BlogDetailViewModel extends ChangeNotifier {
   String? titleValidator(String? value) => Blog.titleValidator(value);
   String? contentValidator(String? value) => Blog.contentValidator(value);
 
-  BlogDetailViewModel({required int blogId}) {
+  BlogDetailViewModel({required String blogId}) {
     readBlogWithLoadingState(blogId);
   }
 
-  Future<void> readBlogWithLoadingState(int blogId) async {
+  Future<void> readBlogWithLoadingState(String blogId) async {
     _pageState = BlogDetailViewPageState.loading;
     notifyListeners();  // Löst Rebuild aus
 
@@ -59,19 +59,19 @@ class BlogDetailViewModel extends ChangeNotifier {
     notifyListeners();  // Löst Rebuild aus
   }
 
-  Future<void> readBlog({bool withNotifying = true, required int blogId}) async {
+  Future<void> readBlog({bool withNotifying = true, required String blogId}) async {
     _blog = await BlogRepository.instance.getBlogPost(blogId);
     if (withNotifying) {
       notifyListeners();  // Löst Rebuild aus
     }
   }
 
-  Future<void> toggleLike(int blogId) async {
+  Future<void> toggleLike(String blogId) async {
     await BlogRepository.instance.toggleLikeInfo(blogId);
     await readBlogWithLoadingState(blogId);
   }
 
-    Future<void> onUpdate(int blogId, BuildContext context) async {
+    Future<void> onUpdate(String blogId, BuildContext context) async {
     if(_pageState == BlogDetailViewPageState.loading ||
        _pageState == BlogDetailViewPageState.updating){
       return;
@@ -99,7 +99,7 @@ class BlogDetailViewModel extends ChangeNotifier {
     }  
   }
 
-  Future<void> updateBlog(int blogId, String? title, String? content, BuildContext context) async {
+  Future<void> updateBlog(String blogId, String? title, String? content, BuildContext context) async {
     _pageState = BlogDetailViewPageState.updating;
     notifyListeners();
 
