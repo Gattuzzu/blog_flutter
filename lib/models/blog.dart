@@ -3,7 +3,7 @@ class Blog {
   String title;
   String content;
   DateTime publishedAt;
-  DateTime lastUpdate;
+  DateTime? lastUpdate;
   Object? comments;
   String? headerImageUrl;
   bool isLikedByMe = false;
@@ -14,11 +14,13 @@ class Blog {
     required this.title,
     required this.content,
     required this.publishedAt,
-    required this.lastUpdate,
+    this.lastUpdate,
     this.comments,
     this.headerImageUrl,
     this.userIdsWithLikes,
-  });
+  }){
+    lastUpdate ??= publishedAt;
+  }
 
   factory Blog.fromJson(Map<String, dynamic> json) {
     return switch (json) {
