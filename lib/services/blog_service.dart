@@ -4,26 +4,28 @@ import 'package:blog_beispiel/models/blog.dart';
 import 'package:http/http.dart' as http;
 
 class BlogService {
-  final uri = "https://cloud.appwrite.io/v1/databases/blog-db/collections/blogs/documents";
-  final query = "?queries[]";
-  final uriParameter = "={method:limit, values:1000}";
-  final xAppwriteProject = "6568509f75ac404ff6ae";
-  final xAppwriteKey = "ac0f362d0cf82fe3d138195e142c0a87a88cee4e2c48821192fb307e1a1c74ee694246f90082b4441aa98a2edaddead28ed6d18cf08c4de0df90dcaeeb53d14f14fb9eeb2edec6708c9553434f1d8df8f8acbfbefd35cccb70f2ab0f9a334dfd979b6052f6e8b8610d57465cbe8d71a7f65e8d48aede789eef6b976b1fe9b2e2";
+  final _uri = "https://cloud.appwrite.io/v1/databases/blog-db/collections/blogs/documents";
+  // final _query = "?queries[]";
+  // final _uriParameter = "={method:limit, values:1000}";
+  final _xAppwriteProject = "6568509f75ac404ff6ae";
+  final _xAppwriteKey = "ac0f362d0cf82fe3d138195e142c0a87a88cee4e2c48821192fb307e1a1c74ee694246f90082b4441aa98a2edaddead28ed6d18cf08c4de0df90dcaeeb53d14f14fb9eeb2edec6708c9553434f1d8df8f8acbfbefd35cccb70f2ab0f9a334dfd979b6052f6e8b8610d57465cbe8d71a7f65e8d48aede789eef6b976b1fe9b2e2";
 
-  late Map<String, String> headers; // late ist ein Schlüsselwort, dass diese Variable erst im Konstruktor initialisiert wird.
+  late Map<String, String> _headers; // late ist ein Schlüsselwort, dass diese Variable erst im Konstruktor initialisiert wird.
   static BlogService instance = BlogService._privateConstructor();
   BlogService._privateConstructor(){
-    headers = {
-      "X-Appwrite-Project": xAppwriteProject,
-      "X-Appwrite-Key": xAppwriteKey
+    _headers = {
+      "Accept": "application/json",
+      "Content-Type" : "application/json",
+      "X-Appwrite-Project": _xAppwriteProject,
+      "X-Appwrite-Key": _xAppwriteKey
     };
   }
 
 
   Future<List<Blog>> fetchAllBlogs() async {
     final response = await http.get(
-      Uri.parse(uri),
-      headers: headers
+      Uri.parse(_uri),
+      headers: _headers
     );
 
     if(response.statusCode == 200){
@@ -42,8 +44,8 @@ class BlogService {
 
   Future<Blog> fetchBlog(String id) async {
     final response = await http.get(
-      Uri.parse("$uri/$id"),
-      headers: headers
+      Uri.parse("$_uri/$id"),
+      headers: _headers
     );
 
     if(response.statusCode == 200){
@@ -59,11 +61,8 @@ class BlogService {
 
   Future<Blog> postBlog(Blog blog) async{
     final response = await http.post(
-      Uri.parse(uri),
-      headers: {
-        ...headers, 
-        "Content-Type" : "application/json",
-      },
+      Uri.parse(_uri),
+      headers: _headers,
       body: jsonEncode({
         "documentId": "unique()",
         "data": blog.toJson()
@@ -87,11 +86,8 @@ class BlogService {
     }
 
     final response = await http.patch(
-      Uri.parse("$uri/$id"),
-      headers: {
-        ...headers, 
-        "Content-Type" : "application/json",
-      },
+      Uri.parse("$_uri/$id"),
+      headers: _headers,
       body: jsonEncode({
         "data": {
           if(title != null)   "title": title,
@@ -113,8 +109,8 @@ class BlogService {
 
   Future<void> deleteBlog(String id) async {
     final response = await http.delete(
-      Uri.parse("$uri/$id"),
-      headers: headers
+      Uri.parse("$_uri/$id"),
+      headers: _headers
     );
 
     if(response.statusCode == 204){
