@@ -15,7 +15,9 @@ class BlogRepository extends ChangeNotifier {
   /// Returns all blog posts ordered by publishedAt descending.
   /// Simulates network delay.
   Future<List<Blog>> getBlogPosts() async {
-    return await service.fetchAllBlogs();
+    List<Blog> blogList = await service.fetchAllBlogs();
+    blogList.sort((blogA, blogB) => blogB.publishedAt.compareTo(blogA.publishedAt));
+    return blogList;
   }
 
   // Gibt nur den gewünschten Blog zurück
