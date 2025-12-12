@@ -38,6 +38,7 @@ class BlogDetailScreen extends StatelessWidget{
             color: Theme.of(context).dividerColor,
             thickness: 2,
           ),
+          _buildImage(context, viewModel),
           SizedBox(
             height: 10,
           ),
@@ -68,6 +69,35 @@ class BlogDetailScreen extends StatelessWidget{
         ),
       ],
     );
+  }
+
+  Widget _buildImage(BuildContext context, BlogDetailViewModel viewModel){
+    if (viewModel.blog?.headerImageUrl != null) {
+      return Column(
+        children: [
+          Image.network(
+            viewModel.blog!.headerImageUrl!,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress){
+              if(loadingProgress == null) return child;
+              return const Center(
+                child: CircularProgressIndicator()
+              );
+            },
+            errorBuilder: (context, error, stackTrace){
+              return const Icon(
+                Icons.broken_image_outlined, 
+                size: 50, 
+                color: Colors.grey
+              );
+            },
+          ),
+          const SizedBox(height: 5),
+        ],
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildContent(/* BuildContext context, */ BlogDetailViewModel viewModel){
