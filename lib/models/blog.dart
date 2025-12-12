@@ -32,9 +32,9 @@ class Blog {
         // 3. Datum als String holen, um es später zu parsen
         r'$createdAt': String createdAt, 
         r'$updatedAt': String lastUpdate,
-        'comments': String comments,
-        'headerImageUrl': String headerImageUrl,
-        'userIdsWithLikes': List<String> userIdsWithLikes,
+        'comments': Object? comments,
+        'headerImageUrl': String? headerImageUrl,
+        'userIdsWithLikes': List<dynamic> userIdsWithLikes,
       } =>
         Blog(
           id: id,
@@ -47,7 +47,7 @@ class Blog {
           // headerImageUrl: json['headerImageUrl'] as String?,
           comments: comments,
           headerImageUrl: headerImageUrl,
-          userIdsWithLikes: userIdsWithLikes,
+          userIdsWithLikes: userIdsWithLikes.cast<String>(),
         ),
       _ => throw const FormatException('Failed to convert from json to Blog'),
     };

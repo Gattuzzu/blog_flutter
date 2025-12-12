@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:blog_beispiel/models/blog.dart';
+import 'package:blog_beispiel/services/app_routes.dart';
 import 'package:blog_beispiel/services/blog_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 enum BlogField {
   title("Title"), 
@@ -12,7 +14,7 @@ enum BlogField {
   const BlogField(this.label);
 }
 
-enum BlogDetailViewPageState {loading, editing, updating, done}
+enum BlogDetailViewPageState {loading, editing, updating, deleting, done}
 
 class BlogDetailViewModel extends ChangeNotifier {
   BlogDetailViewPageState _pageState = BlogDetailViewPageState.loading;
@@ -103,11 +105,26 @@ class BlogDetailViewModel extends ChangeNotifier {
     _pageState = BlogDetailViewPageState.updating;
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 5000));
     await BlogRepository.instance.updateBlogPost(blogId: blogId, title: title, content: content);
+    await readBlog(withNotifying: false, blogId: blogId); // Es wird kein Notifying benötigt, da dies später gemacht wird.
 
     _pageState = BlogDetailViewPageState.done;
     if(!context.mounted) return; // Bevor man eine notifyListener ausgeführt wird, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
     notifyListeners();
+  }
+
+  Future<void> deleteBlog(String blogId, BuildContext context) async{
+    _pageState = BlogDetailViewPageState.deleting;
+    notifyListeners();
+    
+    await BlogRepository.instance.deleteBlogPost(blogId);
+
+    _pageState = BlogDetailViewPageState.done;
+    if(!context.mounted) return; // Bevor man eine Methode auf dem context ausgeführen kann, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
+    if(context.canPop()) { // Die Route darf nur .pop() gemacht werden, wenn dies möglich ist.
+      context.pop();
+    } // else { nichts machen }
+    // Anschlissend soll in jedemFall zum BlogOverview navigiert werden.
+    context.push(AppRoutes.blogOverview);
   }
 }

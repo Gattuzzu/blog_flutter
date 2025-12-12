@@ -81,4 +81,47 @@ class BlogService {
     }
   }
 
+  Future<Blog> patchBlog(String id, String? title, String? content) async{
+    if(title == null && content == null){
+      throw Exception("Failed to patch Blog, because all modifiable values are null");
+    }
+
+    final response = await http.patch(
+      Uri.parse("$uri/$id"),
+      headers: {
+        ...headers, 
+        "Content-Type" : "application/json",
+      },
+      body: jsonEncode({
+        "data": {
+          if(title != null)   "title": title,
+          if(content != null) "content": content,
+        },
+      })
+    );
+
+    if(response.statusCode == 200){
+      // 1. Das gesamte JSON-Objekt als Map dekodieren
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+      // 2. Mapping vom Json in ein Blog Object
+      return Blog.fromJson(jsonResponse);
+    } else{
+      throw Exception("Failed to patch Blog.");
+    }
+  }
+
+  Future<void> deleteBlog(String id) async {
+    final response = await http.delete(
+      Uri.parse("$uri/$id"),
+      headers: headers
+    );
+
+    if(response.statusCode == 204){
+      return;
+    } else{
+      throw Exception("Failed to delete Blog with Id: $id");
+    }
+  }
+
 }

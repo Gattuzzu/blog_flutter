@@ -19,7 +19,9 @@ class BlogDetailScreen extends StatelessWidget{
           _buildBlogDetail(context, blogDetailViewModel),
         if(blogDetailViewModel.pageState == BlogDetailViewPageState.editing || blogDetailViewModel.pageState == BlogDetailViewPageState.updating)
           _buildEditor(context, blogDetailViewModel),
-        if(blogDetailViewModel.pageState == BlogDetailViewPageState.loading || blogDetailViewModel.pageState == BlogDetailViewPageState.updating)
+        if(blogDetailViewModel.pageState == BlogDetailViewPageState.loading || 
+           blogDetailViewModel.pageState == BlogDetailViewPageState.updating ||
+           blogDetailViewModel.pageState == BlogDetailViewPageState.deleting )
           Center(child: CircularProgressIndicator(),),
       ],
     );
@@ -85,14 +87,22 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildDateAndLike(BuildContext context, BlogDetailViewModel viewModel){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: [
-        Text(DateFormat('dd.MM.yyyy').format(viewModel.blog!.publishedAt)),
-        IconButton(
-          icon: Icon(viewModel.blog!.isLikedByMe ? Icons.favorite : Icons.heart_broken),
-          onPressed: () => viewModel.toggleLike(viewModel.blog!.id),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(DateFormat('dd.MM.yyyy').format(viewModel.blog!.publishedAt)),
+            IconButton(
+              icon: Icon(viewModel.blog!.isLikedByMe ? Icons.favorite : Icons.heart_broken),
+              onPressed: () => viewModel.toggleLike(viewModel.blog!.id),
+            ),
+          ],
         ),
+        IconButton(
+          icon: Icon(Icons.delete_forever),
+          onPressed: () => viewModel.deleteBlog(viewModel.blog!.id, context),
+        ), 
       ],
     );
   }

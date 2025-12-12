@@ -31,8 +31,8 @@ class BlogRepository extends ChangeNotifier {
   }
 
   /// Deletes a blog post.
-  Future<void> deleteBlogPost(Blog blog) async {
-    // _blogs.remove(blog);
+  Future<void> deleteBlogPost(String blogId) async {
+    await service.deleteBlog(blogId);
 
     notifyListeners();
   }
@@ -51,10 +51,7 @@ class BlogRepository extends ChangeNotifier {
       required String? title,
       required String? content}) async {
 
-    // final blog = _blogs.firstWhere((blog) => blog.id == blogId);
-
-    // if(title != null){ blog.title = title; }
-    // if(content != null){ blog.content = content; }
+    await service.patchBlog(blogId, title, content);
 
     notifyListeners();
   }
