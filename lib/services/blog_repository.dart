@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:blog_beispiel/models/blog.dart';
 import 'package:blog_beispiel/services/blog_service.dart';
+import 'package:blog_beispiel/services/exceptions/app_exception.dart';
+import 'package:blog_beispiel/services/helper/result.dart';
 import 'package:flutter/material.dart';
 
 
@@ -14,10 +17,17 @@ class BlogRepository extends ChangeNotifier {
 
   /// Returns all blog posts ordered by publishedAt descending.
   /// Simulates network delay.
-  Future<List<Blog>> getBlogPosts() async {
-    List<Blog> blogList = await service.fetchAllBlogs();
-    blogList.sort((blogA, blogB) => blogB.publishedAt.compareTo(blogA.publishedAt));
-    return blogList;
+  Future<Result<List<Blog>>> getBlogPosts() async {
+    try{
+      List<Blog> blogList = await service.fetchAllBlogs();
+      blogList.sort((blogA, blogB) => blogB.publishedAt.compareTo(blogA.publishedAt));
+      return Success(blogList);
+
+    } on SocketException{
+      return Failure(NetworkException());
+    } catch (e){
+      return Failure(ServerException(e.toString()));
+    }
   }
 
   // Gibt nur den gewünschten Blog zurück
