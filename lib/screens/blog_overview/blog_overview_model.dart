@@ -1,33 +1,30 @@
 import 'dart:async';
-import 'package:blog_beispiel/models/blog.dart';
+import 'package:blog_beispiel/screens/blog_overview/blog_overview_state.dart';
 import 'package:blog_beispiel/services/blog_repository.dart';
+import 'package:blog_beispiel/services/helper/result.dart';
 import 'package:flutter/material.dart';
 
 class BlogOverviewModel extends ChangeNotifier {
-  bool isLoading = false;
-  List<Blog> _blogs = [];
-
-  List<Blog> get blogs => _blogs;
+  BlogOverviewState _state = BlogOverviewInitial();
 
   BlogOverviewModel() {
     readBlogsWithLoadingState();
   }
 
+  BlogOverviewState get state => _state;
+
   Future<void> readBlogsWithLoadingState() async {
-    isLoading = true;
+    _state = BlogOverviewLoading();
     notifyListeners();  // Löst Rebuild aus
 
-    await readBlogs(withNotifying: false);
+    var result = await BlogRepository.instance.getBlogPosts();
 
-    isLoading = false;
-    notifyListeners();  // Löst Rebuild aus
-  }
-
-  Future<void> readBlogs({bool withNotifying = true}) async {
-    _blogs = await BlogRepository.instance.getBlogPosts();
-    if (withNotifying) {
-      notifyListeners();  // Löst Rebuild aus
+    switch(result){
+      case Success(data: var blogs): _state = BlogOverviewLoaded(blogs);
+      case Failure(error: var e): _state = BlogOverviewError(e.toString());
     }
+
+    notifyListeners();  // Löst Rebuild aus
   }
 
   Future<void> toggleLike(String blogId) async {
