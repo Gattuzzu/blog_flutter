@@ -1,45 +1,46 @@
 import 'dart:async';
 import 'package:blog_beispiel/models/blog.dart';
+import 'package:blog_beispiel/screens/blog_detail/blog_detail_state.dart';
 import 'package:blog_beispiel/services/app_routes.dart';
 import 'package:blog_beispiel/services/blog_repository.dart';
+import 'package:blog_beispiel/services/helper/result.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-enum BlogField {
-  title("Title"), 
-  content("Content");
-
-  final String label;
-
-  const BlogField(this.label);
-}
-
-enum BlogDetailViewPageState {loading, editing, updating, deleting, done}
-
 class BlogDetailViewModel extends ChangeNotifier {
-  BlogDetailViewPageState _pageState = BlogDetailViewPageState.loading;
+  BlogDetailState _state = BlogDetailInitial();
   final formKey = GlobalKey<FormState>();
-  Blog? _blog;
 
   BlogField? _field;
   String? _title;
   String? _content;
 
-
-  BlogDetailViewPageState get pageState => _pageState;
-  Blog? get blog => _blog;
+  BlogDetailState get state => _state;
   BlogField? get field => _field;
 
   void setTitle(String? value) => _title = value;
   void setContent(String? value) => _content = value;
 
   void setPageStateToEdit(BlogField field){
-    _pageState = BlogDetailViewPageState.editing;
-    _field = field;
+    if(_state case BlogAtLeastOnceLoaded actState){
+      _state = BlogDetailEditing(field, actState.blog);
+      _field = field;
+
+    } else{
+      _state = BlogDetailError(errorDuringDevelopment);
+    }
+
     notifyListeners();
   } 
+
   void setPageStateToDone() {
-    _pageState = BlogDetailViewPageState.done;
+    if(_state case BlogAtLeastOnceLoaded actState){
+      _state = BlogDetailLoaded(actState.blog);
+
+    } else{
+      _state = BlogDetailError(errorDuringDevelopment);
+    }
+
     notifyListeners();
   } 
 
@@ -52,20 +53,21 @@ class BlogDetailViewModel extends ChangeNotifier {
   }
 
   Future<void> readBlogWithLoadingState(String blogId) async {
-    _pageState = BlogDetailViewPageState.loading;
+    _state = BlogDetailLoading();
     notifyListeners();  // Löst Rebuild aus
 
-    await readBlog(withNotifying: false, blogId: blogId);
-
-    _pageState = BlogDetailViewPageState.done;
-    notifyListeners();  // Löst Rebuild aus
+    await _readBlog(blogId); // Löst Rebuild aus
   }
 
-  Future<void> readBlog({bool withNotifying = true, required String blogId}) async {
-    _blog = await BlogRepository.instance.getBlogPost(blogId);
-    if (withNotifying) {
-      notifyListeners();  // Löst Rebuild aus
-    }
+  Future<void> _readBlog(String blogId) async {
+    var result = await BlogRepository.instance.getBlogPost(blogId);
+
+    _state = switch(result){
+      Success() => BlogDetailLoaded(result.data),
+      Failure() => BlogDetailError(result.error.toString()),
+    };
+
+    notifyListeners();  // Löst Rebuild aus
   }
 
   Future<void> toggleLike(String blogId) async {
@@ -74,57 +76,72 @@ class BlogDetailViewModel extends ChangeNotifier {
   }
 
     Future<void> onUpdate(String blogId, BuildContext context) async {
-    if(_pageState == BlogDetailViewPageState.loading ||
-       _pageState == BlogDetailViewPageState.updating){
+    if(_state is BlogDetailLoading ||
+       _state is BlogDetailUpdating){
       return;
 
     } else{
-      if (formKey.currentState != null)
-      {
-        _pageState = BlogDetailViewPageState.updating;
-        notifyListeners();
-        final isValid = formKey.currentState!.validate();
-        if (isValid){
-          // Bevor man eine notifyListener ausgeführt wird, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
-          if(context.mounted){
-            FocusScope.of(context).unfocus();
-          }
-          formKey.currentState!.save(); // Die Werte werden in das ViewModel geschrieben
-          await updateBlog(blogId, _title, _content, context);
-
-        } else{ // !isValid
-          _pageState = BlogDetailViewPageState.editing;
-          if(!context.mounted) return; // Bevor man eine notifyListener ausgeführt wird, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
+      if (_state case BlogDetailEditing actState){
+        if (formKey.currentState != null)
+        {
+          _state = BlogDetailUpdating(actState.blog);
           notifyListeners();
+          final isValid = formKey.currentState!.validate();
+          if (isValid){
+            // Bevor man eine notifyListener ausgeführt wird, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
+            if(context.mounted){
+              FocusScope.of(context).unfocus();
+            }
+            formKey.currentState!.save(); // Die Werte werden in das ViewModel geschrieben
+            await updateBlog(blogId, _title, _content, context);
+
+          } else{ // !isValid
+            _state = BlogDetailEditing(actState.field, actState.blog);
+            if(!context.mounted) return; // Bevor man eine notifyListener ausgeführt wird, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
+            notifyListeners();
+          }
         }
+
+      } else{
+        _state = BlogDetailError(errorDuringDevelopment);
+        notifyListeners();
       }
     }  
   }
 
   Future<void> updateBlog(String blogId, String? title, String? content, BuildContext context) async {
-    _pageState = BlogDetailViewPageState.updating;
-    notifyListeners();
+    if(_state case BlogAtLeastOnceLoaded actState){
+      _state = BlogDetailUpdating(actState.blog);
+      notifyListeners();
 
-    await BlogRepository.instance.updateBlogPost(blogId: blogId, title: title, content: content);
-    await readBlog(withNotifying: false, blogId: blogId); // Es wird kein Notifying benötigt, da dies später gemacht wird.
-
-    _pageState = BlogDetailViewPageState.done;
-    if(!context.mounted) return; // Bevor man eine notifyListener ausgeführt wird, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
-    notifyListeners();
+      await BlogRepository.instance.updateBlogPost(blogId: blogId, title: title, content: content);
+      if(!context.mounted) return; // Bevor der BuildContext in der nächsten Methode übergeben werden kann, muss geprüft werden, dass er noch im sichtbaren tree von Flutter ist.
+      await _readBlog(blogId); // Löst Rebuild aus
+      
+    } else{
+      _state = BlogDetailError(errorDuringDevelopment);
+      notifyListeners();
+    }
   }
 
   Future<void> deleteBlog(String blogId, BuildContext context) async{
-    _pageState = BlogDetailViewPageState.deleting;
-    notifyListeners();
-    
-    await BlogRepository.instance.deleteBlogPost(blogId);
+    if(_state case BlogAtLeastOnceLoaded actState){
+      _state = BlogDetailDeleting(actState.blog);
+      notifyListeners();
+      
+      await BlogRepository.instance.deleteBlogPost(blogId);
 
-    _pageState = BlogDetailViewPageState.done;
-    if(!context.mounted) return; // Bevor man eine Methode auf dem context ausgeführen kann, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
-    if(context.canPop()) { // Die Route darf nur .pop() gemacht werden, wenn dies möglich ist.
-      context.pop();
-    } // else { nichts machen }
-    // Anschlissend soll in jedemFall zum BlogOverview navigiert werden.
-    context.push(AppRoutes.blogOverview);
+      _state = BlogDetailInitial();
+      if(!context.mounted) return; // Bevor man eine Methode auf dem context ausgeführen kann, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
+      if(context.canPop()) { // Die Route darf nur .pop() gemacht werden, wenn dies möglich ist.
+        context.pop();
+      } // else { nichts machen }
+      // Anschlissend soll in jedemFall zum BlogOverview navigiert werden.
+      context.push(AppRoutes.blogOverview);
+
+    } else{
+      _state = BlogDetailError(errorDuringDevelopment);
+      notifyListeners();
+    }
   }
 }

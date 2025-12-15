@@ -18,53 +18,55 @@ class BlogRepository extends ChangeNotifier {
   /// Returns all blog posts ordered by publishedAt descending.
   /// Simulates network delay.
   Future<Result<List<Blog>>> getBlogPosts() async {
-    try{
+    return await _standardErrorCatch<List<Blog>>(() async
+    {
       List<Blog> blogList = await service.fetchAllBlogs();
       blogList.sort((blogA, blogB) => blogB.publishedAt.compareTo(blogA.publishedAt));
-      return Success(blogList);
-
-    } on SocketException{
-      return Failure(NetworkException());
-    } catch (e){
-      return Failure(ServerException(e.toString()));
-    }
+      return blogList;
+    });
   }
 
   // Gibt nur den gewünschten Blog zurück
-  Future<Blog> getBlogPost(String blogId) async {
-    return await service.fetchBlog(blogId);
+  Future<Result<Blog>> getBlogPost(String blogId) async {
+    return await _standardErrorCatch<Blog>(() async => await service.fetchBlog(blogId));
   }
 
   /// Creates a new blog post and sets a new id.
-  Future<void> addBlogPost(Blog blog) async {
-    await service.postBlog(blog);
-
-    notifyListeners();
+  Future<Result<void>> addBlogPost(Blog blog) async {
+    return await _standardErrorCatch<void>(() async => await service.postBlog(blog));
   }
 
   /// Deletes a blog post.
-  Future<void> deleteBlogPost(String blogId) async {
-    await service.deleteBlog(blogId);
-
-    notifyListeners();
+  Future<Result<void>> deleteBlogPost(String blogId) async {
+    return await _standardErrorCatch<void>(() async => await service.deleteBlog(blogId));
   }
 
   /// Changes the like info of a blog post.
-  Future<void> toggleLikeInfo(String blogId) async {
+  Future<Result<void>> toggleLikeInfo(String blogId) async {
     // final blog = _blogs.firstWhere((blog) => blog.id == blogId);
     // blog.isLikedByMe = !blog.isLikedByMe;
 
-    notifyListeners();
+    return Failure(Exception("Toggle Like is not yet implemented!"));
   }
 
   /// Updates a blog post with the given id.
-  Future<void> updateBlogPost(
+  Future<Result<void>> updateBlogPost(
       {required String blogId,
       required String? title,
       required String? content}) async {
 
-    await service.patchBlog(blogId, title, content);
+    return await _standardErrorCatch<void>(() async => await service.patchBlog(blogId, title, content));
+  }
 
-    notifyListeners();
+  Future<Result<T>> _standardErrorCatch<T>(Future<T> Function() action) async {
+    try{
+      return Success(await action());
+
+    } on SocketException{
+      return Failure(NetworkException());
+
+    } catch (e){
+      return Failure(ServerException(e.toString()));
+    }
   }
 }

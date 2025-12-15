@@ -1,3 +1,4 @@
+import 'package:blog_beispiel/screens/blog_detail/blog_detail_state.dart';
 import 'package:blog_beispiel/screens/blog_detail/blog_detail_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,19 +11,24 @@ class BlogDetailScreen extends StatelessWidget{
   
   @override
   Widget build(BuildContext context) {
-    final blogDetailViewModel = context.watch<BlogDetailViewModel>();
+    final viewModel = context.watch<BlogDetailViewModel>();
     return Stack(
       children: [
-        if(blogDetailViewModel.pageState == BlogDetailViewPageState.done && blogDetailViewModel.blog == null)
-          Center(child: Text('Error while loading the Blog $blogId'),)
-        else if(blogDetailViewModel.blog != null)
-          _buildBlogDetail(context, blogDetailViewModel),
-        if(blogDetailViewModel.pageState == BlogDetailViewPageState.editing || blogDetailViewModel.pageState == BlogDetailViewPageState.updating)
-          _buildEditor(context, blogDetailViewModel),
-        if(blogDetailViewModel.pageState == BlogDetailViewPageState.loading || 
-           blogDetailViewModel.pageState == BlogDetailViewPageState.updating ||
-           blogDetailViewModel.pageState == BlogDetailViewPageState.deleting )
-          Center(child: CircularProgressIndicator(),),
+        // Der erst Switch Case baut den eigentlichen Inhalt der Webseite an.
+        if (viewModel.state is BlogDetailInitial)
+          const Text('State Init')
+
+        else if (viewModel.state case BlogDetailError(message: var msg))
+          Center(child: Text(msg))
+
+        else if (viewModel.state is BlogAtLeastOnceLoaded)
+          _buildBlogDetail(context, viewModel),
+
+        if (viewModel.state case BlogDetailEditing() || BlogDetailUpdating())
+          _buildEditor(context, viewModel),
+
+        if (viewModel.state case BlogDetailLoading() || BlogDetailUpdating() || BlogDetailDeleting())
+          const Center(child: CircularProgressIndicator()),
       ],
     );
   }
@@ -53,13 +59,18 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildTitle(BuildContext context, BlogDetailViewModel viewModel){
+    String title = errorDuringDevelopment;
+    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+      title = actState.blog.title;
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Text( 
-            viewModel.blog!.title,
+            title,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
@@ -72,11 +83,16 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildImage(BuildContext context, BlogDetailViewModel viewModel){
-    if (viewModel.blog?.headerImageUrl != null) {
+    String? headerImageUrl;
+    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+      headerImageUrl = actState.blog.headerImageUrl;
+    }
+
+    if (headerImageUrl != null) {
       return Column(
         children: [
           Image.network(
-            viewModel.blog!.headerImageUrl!,
+            headerImageUrl,
             width: double.infinity,
             fit: BoxFit.cover,
             loadingBuilder: (context, child, loadingProgress){
@@ -101,12 +117,17 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildContent(/* BuildContext context, */ BlogDetailViewModel viewModel){
+    String content = errorDuringDevelopment;
+    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+      content = actState.blog.content;
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Text(viewModel.blog!.content)
+          child: Text(content)
         ),
         IconButton(
           icon: Icon(Icons.edit),
@@ -117,21 +138,30 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildDateAndLike(BuildContext context, BlogDetailViewModel viewModel){
+    String id = "";
+    String publishedAt = errorDuringDevelopment;
+    bool isLikedByMe = false;
+    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+      id = actState.blog.id;
+      publishedAt = DateFormat('dd.MM.yyyy').format(actState.blog.publishedAt);
+      isLikedByMe = actState.blog.isLikedByMe;
+    }
+
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(DateFormat('dd.MM.yyyy').format(viewModel.blog!.publishedAt)),
+            Text(publishedAt),
             IconButton(
-              icon: Icon(viewModel.blog!.isLikedByMe ? Icons.favorite : Icons.heart_broken),
-              onPressed: () => viewModel.toggleLike(viewModel.blog!.id),
+              icon: Icon(isLikedByMe ? Icons.favorite : Icons.heart_broken),
+              onPressed: () => viewModel.toggleLike(id),
             ),
           ],
         ),
         IconButton(
           icon: Icon(Icons.delete_forever),
-          onPressed: () => viewModel.deleteBlog(viewModel.blog!.id, context),
+          onPressed: () => viewModel.deleteBlog(id, context),
         ), 
       ],
     );
@@ -199,9 +229,14 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildEditTitle(BlogDetailViewModel viewModel){
+    String title = errorDuringDevelopment;
+    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+      title = actState.blog.title;
+    }
+
     return TextFormField(
-      initialValue: viewModel.blog!.title,
-      enabled: viewModel.pageState == BlogDetailViewPageState.editing,
+      initialValue: title,
+      enabled: viewModel.state is BlogDetailEditing,
       decoration: InputDecoration(
         labelText: "Title",
         border: OutlineInputBorder(),
@@ -213,9 +248,14 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildEditContent(BlogDetailViewModel viewModel){
+    String content = errorDuringDevelopment;
+    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+      content = actState.blog.content;
+    }
+
     return TextFormField(
-      initialValue: viewModel.blog!.content,
-      enabled: viewModel.pageState == BlogDetailViewPageState.editing,
+      initialValue: content,
+      enabled: viewModel.state is BlogDetailEditing,
       decoration: InputDecoration(
         labelText: "Content",
         border: OutlineInputBorder(),
@@ -229,7 +269,7 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildButtons(BuildContext context, BlogDetailViewModel viewModel){
-    Color backgroundColor = viewModel.pageState == BlogDetailViewPageState.editing ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).colorScheme.inversePrimary;
+    Color backgroundColor = viewModel.state is BlogDetailEditing ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).colorScheme.inversePrimary;
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
