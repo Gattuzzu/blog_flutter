@@ -14,15 +14,15 @@ class BlogOverview extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    final blogOverviewModel = context.watch<BlogOverviewModel>();
+    final viewModel = context.watch<BlogOverviewModel>();
     return FocusDetector(
-      onFocusGained: () => blogOverviewModel.readBlogsWithLoadingState(),
+      onFocusGained: () => viewModel.readBlogsWithLoadingState(),
       child: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo){
           // Das wird benötigt, wenn die Blogliste angezeigt wird, und sie der User neu laden möchte.
           if(scrollInfo is ScrollEndNotification){
-            if(blogOverviewModel.state is BlogOverviewLoaded && scrollInfo.metrics.pixels < 0){
-              blogOverviewModel.readBlogsWithLoadingState();
+            if(viewModel.state is BlogOverviewLoaded && scrollInfo.metrics.pixels < 0){
+              viewModel.readBlogsWithLoadingState();
             }
           }
 
@@ -30,12 +30,12 @@ class BlogOverview extends StatelessWidget{
           // Dann soll der User die Möglichkeit haben durch wischen ein Update auszuführen.
           if(scrollInfo is UserScrollNotification){
             // Der User wischt mit dem Finger nach Unten
-            if((blogOverviewModel.state is BlogOverviewInitial 
-                || blogOverviewModel.state is BlogOverviewError)
+            if((viewModel.state is BlogOverviewInitial 
+                || viewModel.state is BlogOverviewError)
                && scrollInfo.direction == ScrollDirection.forward
                // -10 verwenden, dass das neuladen erst nach einem guten Scroll gemacht wird, und nicht bei jedem Pixel.
                && scrollInfo.metrics.pixels <= 0){
-              blogOverviewModel.readBlogsWithLoadingState();
+              viewModel.readBlogsWithLoadingState();
             }
           }
 
@@ -45,13 +45,16 @@ class BlogOverview extends StatelessWidget{
           child: Stack(
             fit: StackFit.expand,
             children: [
-              switch(blogOverviewModel.state){
-                BlogOverviewInitial() => _buildScrollableContent(const Text("Initial")),
-                BlogOverviewError(message: var msg) => _buildScrollableContent(Text(msg)),
-                BlogOverviewLoaded(blogs: var blogs) => 
-                  blogs.isEmpty
-                    ? const Center(child: Text("No Blogs available"))
-                    : ListView.builder(
+              if(viewModel.state is BlogOverviewInitial)
+                _buildScrollableContent(const Text("Initial"))
+
+              else if(viewModel.state case BlogOverviewError(message: var msg))
+                _buildScrollableContent(Text(msg))
+
+              else if(viewModel.state case BlogOverviewAtLeastOnceLoaded(blogs: var blogs))
+                blogs.isEmpty
+                  ? const Center(child: Text("No Blogs available"))
+                  : ListView.builder(
                       physics: const BouncingScrollPhysics(),
                       itemCount: blogs.length,
                       itemBuilder: (context, index){
@@ -59,13 +62,15 @@ class BlogOverview extends StatelessWidget{
                         return BlogCard(
                           blog: blog, 
                           dateFormatter: DateFormat('dd.MM.yyyy'), 
-                          onLikeToggle: () => blogOverviewModel.toggleLike(blog.id),
+                          onLikeToggle: () => viewModel.toggleLike(blog.id),
                           onTap: () => _onBlogTap(context, blog.id),
                         );
                       },
                     ),
-                BlogOverviewLoading() => const Center(child: CircularProgressIndicator()),
-              },
+              
+              if(viewModel.state case BlogOverviewLoading() || BlogOverviewUpdating())
+                const Center(child: CircularProgressIndicator()),
+              
               Positioned(
                 bottom: 20,
                 right: 20,

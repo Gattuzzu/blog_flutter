@@ -6,12 +6,21 @@ class BlogOverviewInitial extends BlogOverviewState {}
 
 class BlogOverviewLoading extends BlogOverviewState {}
 
-class BlogOverviewLoaded extends BlogOverviewState {
-  final List<Blog> blogs;
-  BlogOverviewLoaded(this.blogs);
-}
-
 class BlogOverviewError extends BlogOverviewState {
   final String message;
   BlogOverviewError(this.message);
+}
+
+
+sealed class BlogOverviewAtLeastOnceLoaded extends BlogOverviewState{
+  final List<Blog> blogs;
+  BlogOverviewAtLeastOnceLoaded(this.blogs);
+}
+
+class BlogOverviewLoaded extends BlogOverviewAtLeastOnceLoaded {
+  BlogOverviewLoaded(super.blogs);
+}
+
+class BlogOverviewUpdating extends BlogOverviewAtLeastOnceLoaded{
+  BlogOverviewUpdating(super.blogs);
 }

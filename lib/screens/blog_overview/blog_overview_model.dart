@@ -14,7 +14,13 @@ class BlogOverviewModel extends ChangeNotifier {
   BlogOverviewState get state => _state;
 
   Future<void> readBlogsWithLoadingState() async {
-    _state = BlogOverviewLoading();
+    if(_state case BlogOverviewAtLeastOnceLoaded actState){
+      _state = BlogOverviewUpdating(actState.blogs);
+
+    } else{
+      _state = BlogOverviewLoading();
+    }
+    
     notifyListeners();  // Löst Rebuild aus
 
     var result = await BlogRepository.instance.getBlogPosts();
