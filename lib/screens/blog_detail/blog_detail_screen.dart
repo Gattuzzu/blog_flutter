@@ -21,7 +21,7 @@ class BlogDetailScreen extends StatelessWidget{
         else if (viewModel.state case BlogDetailError(message: var msg))
           Center(child: Text(msg))
 
-        else if (viewModel.state is BlogAtLeastOnceLoaded)
+        else if (viewModel.state is BlogDetailAtLeastOnceLoaded)
           _buildBlogDetail(context, viewModel),
 
         if (viewModel.state case BlogDetailEditing() || BlogDetailUpdating())
@@ -60,7 +60,7 @@ class BlogDetailScreen extends StatelessWidget{
 
   Widget _buildTitle(BuildContext context, BlogDetailViewModel viewModel){
     String title = errorDuringDevelopment;
-    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
       title = actState.blog.title;
     }
 
@@ -84,7 +84,7 @@ class BlogDetailScreen extends StatelessWidget{
 
   Widget _buildImage(BuildContext context, BlogDetailViewModel viewModel){
     String? headerImageUrl;
-    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
       headerImageUrl = actState.blog.headerImageUrl;
     }
 
@@ -118,7 +118,7 @@ class BlogDetailScreen extends StatelessWidget{
 
   Widget _buildContent(/* BuildContext context, */ BlogDetailViewModel viewModel){
     String content = errorDuringDevelopment;
-    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
       content = actState.blog.content;
     }
 
@@ -141,7 +141,7 @@ class BlogDetailScreen extends StatelessWidget{
     String id = "";
     String publishedAt = errorDuringDevelopment;
     bool isLikedByMe = false;
-    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
       id = actState.blog.id;
       publishedAt = DateFormat('dd.MM.yyyy').format(actState.blog.publishedAt);
       isLikedByMe = actState.blog.isLikedByMe;
@@ -230,7 +230,7 @@ class BlogDetailScreen extends StatelessWidget{
 
   Widget _buildEditTitle(BlogDetailViewModel viewModel){
     String title = errorDuringDevelopment;
-    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
       title = actState.blog.title;
     }
 
@@ -249,7 +249,7 @@ class BlogDetailScreen extends StatelessWidget{
 
   Widget _buildEditContent(BlogDetailViewModel viewModel){
     String content = errorDuringDevelopment;
-    if (viewModel.state case BlogAtLeastOnceLoaded actState) {
+    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
       content = actState.blog.content;
     }
 

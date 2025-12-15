@@ -23,24 +23,24 @@ class BlogDetailError extends BlogDetailState {
 }
 
 
-sealed class BlogAtLeastOnceLoaded extends BlogDetailState {
+sealed class BlogDetailAtLeastOnceLoaded extends BlogDetailState {
   final Blog blog;
-  BlogAtLeastOnceLoaded(this.blog);
+  BlogDetailAtLeastOnceLoaded(this.blog);
 }
 
-class BlogDetailLoaded extends BlogAtLeastOnceLoaded {
+class BlogDetailLoaded extends BlogDetailAtLeastOnceLoaded {
   BlogDetailLoaded(super.blog);
 }
 
-class BlogDetailEditing extends BlogAtLeastOnceLoaded {
+class BlogDetailEditing extends BlogDetailAtLeastOnceLoaded {
   final BlogField field;
   BlogDetailEditing(this.field, super.blog);
 }
 
-class BlogDetailUpdating extends BlogAtLeastOnceLoaded {
+class BlogDetailUpdating extends BlogDetailAtLeastOnceLoaded {
   BlogDetailUpdating(super.blog);
 }
 
-class BlogDetailDeleting extends BlogAtLeastOnceLoaded {
+class BlogDetailDeleting extends BlogDetailAtLeastOnceLoaded {
   BlogDetailDeleting(super.blog);
 }

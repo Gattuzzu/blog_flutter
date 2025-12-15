@@ -22,7 +22,7 @@ class BlogDetailViewModel extends ChangeNotifier {
   void setContent(String? value) => _content = value;
 
   void setPageStateToEdit(BlogField field){
-    if(_state case BlogAtLeastOnceLoaded actState){
+    if(_state case BlogDetailAtLeastOnceLoaded actState){
       _state = BlogDetailEditing(field, actState.blog);
       _field = field;
 
@@ -34,7 +34,7 @@ class BlogDetailViewModel extends ChangeNotifier {
   } 
 
   void setPageStateToDone() {
-    if(_state case BlogAtLeastOnceLoaded actState){
+    if(_state case BlogDetailAtLeastOnceLoaded actState){
       _state = BlogDetailLoaded(actState.blog);
 
     } else{
@@ -110,7 +110,7 @@ class BlogDetailViewModel extends ChangeNotifier {
   }
 
   Future<void> updateBlog(String blogId, String? title, String? content, BuildContext context) async {
-    if(_state case BlogAtLeastOnceLoaded actState){
+    if(_state case BlogDetailAtLeastOnceLoaded actState){
       _state = BlogDetailUpdating(actState.blog);
       notifyListeners();
 
@@ -125,7 +125,7 @@ class BlogDetailViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteBlog(String blogId, BuildContext context) async{
-    if(_state case BlogAtLeastOnceLoaded actState){
+    if(_state case BlogDetailAtLeastOnceLoaded actState){
       _state = BlogDetailDeleting(actState.blog);
       notifyListeners();
       
