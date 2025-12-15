@@ -9,8 +9,6 @@ enum BlogField {
   const BlogField(this.label);
 }
 
-String errorDuringDevelopment = "Error during development: Page in the wrong state!";
-
 sealed class BlogDetailState {}
 
 class BlogDetailInitial extends BlogDetailState {}

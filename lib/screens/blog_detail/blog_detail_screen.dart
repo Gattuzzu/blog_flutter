@@ -1,5 +1,7 @@
+import 'package:blog_beispiel/models/blog.dart';
 import 'package:blog_beispiel/screens/blog_detail/blog_detail_state.dart';
 import 'package:blog_beispiel/screens/blog_detail/blog_detail_view_model.dart';
+import 'package:blog_beispiel/services/exceptions/app_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -34,43 +36,44 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildBlogDetail(BuildContext context, BlogDetailViewModel viewModel){
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTitle(context, viewModel),
-          Divider(
-            color: Theme.of(context).dividerColor,
-            thickness: 2,
-          ),
-          _buildImage(context, viewModel),
-          SizedBox(
-            height: 10,
-          ),
-          _buildContent(/* context, */ viewModel),
-          SizedBox(
-            height: 10,
-          ),
-          _buildDateAndLike(context, viewModel),
-        ],
-      ),
-    );
+    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
+      Blog blog;
+      blog = actState.blog;
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTitle(context, viewModel, blog),
+            Divider(
+              color: Theme.of(context).dividerColor,
+              thickness: 2,
+            ),
+            _buildImage(context, viewModel, blog),
+            SizedBox(
+              height: 10,
+            ),
+            _buildContent(/* context, */ viewModel, blog),
+            SizedBox(
+              height: 10,
+            ),
+            _buildDateAndLike(context, viewModel, blog),
+          ],
+        ),
+      );
+    } else{
+      return Text(errorDuringDevelopment);
+    }
   }
 
-  Widget _buildTitle(BuildContext context, BlogDetailViewModel viewModel){
-    String title = errorDuringDevelopment;
-    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
-      title = actState.blog.title;
-    }
-
+  Widget _buildTitle(BuildContext context, BlogDetailViewModel viewModel, Blog blog){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Text( 
-            title,
+            blog.title,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
@@ -82,17 +85,12 @@ class BlogDetailScreen extends StatelessWidget{
     );
   }
 
-  Widget _buildImage(BuildContext context, BlogDetailViewModel viewModel){
-    String? headerImageUrl;
-    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
-      headerImageUrl = actState.blog.headerImageUrl;
-    }
-
-    if (headerImageUrl != null) {
+  Widget _buildImage(BuildContext context, BlogDetailViewModel viewModel, Blog blog){
+    if (blog.headerImageUrl != null) {
       return Column(
         children: [
           Image.network(
-            headerImageUrl,
+            blog.headerImageUrl!,
             width: double.infinity,
             fit: BoxFit.cover,
             loadingBuilder: (context, child, loadingProgress){
@@ -116,18 +114,13 @@ class BlogDetailScreen extends StatelessWidget{
     return const SizedBox.shrink();
   }
 
-  Widget _buildContent(/* BuildContext context, */ BlogDetailViewModel viewModel){
-    String content = errorDuringDevelopment;
-    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
-      content = actState.blog.content;
-    }
-
+  Widget _buildContent(/* BuildContext context, */ BlogDetailViewModel viewModel, Blog blog){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Text(content)
+          child: Text(blog.content)
         ),
         IconButton(
           icon: Icon(Icons.edit),
@@ -137,31 +130,22 @@ class BlogDetailScreen extends StatelessWidget{
     );
   }
 
-  Widget _buildDateAndLike(BuildContext context, BlogDetailViewModel viewModel){
-    String id = "";
-    String publishedAt = errorDuringDevelopment;
-    bool isLikedByMe = false;
-    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
-      id = actState.blog.id;
-      publishedAt = DateFormat('dd.MM.yyyy').format(actState.blog.publishedAt);
-      isLikedByMe = actState.blog.isLikedByMe;
-    }
-
+  Widget _buildDateAndLike(BuildContext context, BlogDetailViewModel viewModel, Blog blog){
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(publishedAt),
+            Text(DateFormat('dd.MM.yyyy').format(blog.publishedAt)),
             IconButton(
-              icon: Icon(isLikedByMe ? Icons.favorite : Icons.heart_broken),
-              onPressed: () => viewModel.toggleLike(id),
+              icon: Icon(blog.isLikedByMe ? Icons.favorite : Icons.heart_broken),
+              onPressed: () => viewModel.toggleLike(blog.id),
             ),
           ],
         ),
         IconButton(
           icon: Icon(Icons.delete_forever),
-          onPressed: () => viewModel.deleteBlog(id, context),
+          onPressed: () => viewModel.deleteBlog(blog.id, context),
         ), 
       ],
     );
@@ -222,49 +206,33 @@ class BlogDetailScreen extends StatelessWidget{
   }
 
   Widget _buildInput(BlogDetailViewModel viewModel){
-    return switch(viewModel.field!) {
-      BlogField.title => _buildEditTitle(viewModel),
-      BlogField.content => _buildEditContent(viewModel),
-    };
+    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
+      Blog blog;
+      blog = actState.blog;
+      return switch(viewModel.field!) {
+        BlogField.title => _buildEditField(  viewModel, true,  blog.title),
+        BlogField.content => _buildEditField(viewModel, false, blog.content),
+      };
+    } else{
+      return Text(errorDuringDevelopment);
+    }
   }
 
-  Widget _buildEditTitle(BlogDetailViewModel viewModel){
-    String title = errorDuringDevelopment;
-    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
-      title = actState.blog.title;
-    }
-
+  // wenn isTitle gesetzt ist, dann ist das Widget für title konfiguriert
+  // wenn isTitle ist nicht gesetzt, dann ist das Widget für content konfiguriert
+  Widget _buildEditField(BlogDetailViewModel viewModel, bool isTitle, String value){
     return TextFormField(
-      initialValue: title,
+      initialValue: value,
       enabled: viewModel.state is BlogDetailEditing,
       decoration: InputDecoration(
-        labelText: "Title",
+        labelText: isTitle ? "Title" : "Content",
         border: OutlineInputBorder(),
       ),
       // autovalidateMode: AutovalidateMode.onUnfocus,
-      validator: viewModel.titleValidator,
-      onSaved: viewModel.setTitle,
-    );
-  }
-
-  Widget _buildEditContent(BlogDetailViewModel viewModel){
-    String content = errorDuringDevelopment;
-    if (viewModel.state case BlogDetailAtLeastOnceLoaded actState) {
-      content = actState.blog.content;
-    }
-
-    return TextFormField(
-      initialValue: content,
-      enabled: viewModel.state is BlogDetailEditing,
-      decoration: InputDecoration(
-        labelText: "Content",
-        border: OutlineInputBorder(),
-      ),
-      minLines: 5,
-      maxLines: 20,
-      // autovalidateMode: AutovalidateMode.onUnfocus,
-      validator: viewModel.contentValidator,
-      onSaved: viewModel.setContent,
+      minLines:  isTitle ? null : 5,
+      maxLines:  isTitle ? 1 : 20,
+      validator: isTitle ? viewModel.titleValidator : viewModel.contentValidator,
+      onSaved:   isTitle ? viewModel.setTitle       : viewModel.setContent,
     );
   }
 
