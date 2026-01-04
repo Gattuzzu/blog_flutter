@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:blog_beispiel/domain/models/blog.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 
 class BlogService {
-  final _uri = "https://cloud.appwrite.io/v1/databases/blog-db/collections/blogs/documents";
+  final _uri = GlobalConfiguration().getValue('blogApiUrl');
   // final _query = "?queries[]";
   // final _uriParameter = "={method:limit, values:1000}";
   final _xAppwriteProject = "6568509f75ac404ff6ae";
