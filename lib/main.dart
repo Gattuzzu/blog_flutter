@@ -1,3 +1,4 @@
+import 'package:blog_beispiel/di/get_it_setup.dart';
 import 'package:blog_beispiel/main_view_model.dart';
 import 'package:blog_beispiel/data/router/app_router.dart';
 import 'package:flutter/foundation.dart';
@@ -31,6 +32,9 @@ void main() async {
     // Auch diese Fehler sollten idealerweise an Sentry/Crashlytics gesendet werden
     return true;
   };
+
+  // Methode ist Global und in "lib/di/get_it_setup.dart"
+  configureDependencies(); 
 
   WidgetsFlutterBinding.ensureInitialized();
 

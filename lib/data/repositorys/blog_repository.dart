@@ -6,8 +6,9 @@ import 'package:blog_beispiel/data/apis/blog_service.dart';
 import 'package:blog_beispiel/data/exceptions/app_exception.dart';
 import 'package:blog_beispiel/data/helper/result.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 
-
+@lazySingleton
 class BlogRepository extends ChangeNotifier {
   // Static instance + private Constructor for simple Singleton-approach
   static BlogRepository instance = BlogRepository._privateConstructor();
