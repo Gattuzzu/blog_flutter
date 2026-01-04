@@ -31,21 +31,37 @@ void main() {
     return true;
   };
   
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget{
   const MyApp({super.key});
+
+  @override
+  State<StatefulWidget> createState() => MyAppState();
+
+}
+
+class MyAppState extends State {
+  static MyAppState? _thisWidget;
+  Color _appColor = Colors.deepPurple;
+
+  MyAppState();
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    MyAppState._thisWidget = this;
     return MaterialApp.router(
       title: 'Blog App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: _appColor),
       ),
       routerConfig: appRouter,
     );
+  }
+
+  static void changeColor(Color newColor) {
+    MyAppState._thisWidget?.setState(() => MyAppState._thisWidget?._appColor = newColor);
   }
 }
