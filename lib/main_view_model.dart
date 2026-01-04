@@ -8,14 +8,13 @@ class MainViewModel extends ChangeNotifier {
 
   Color get appColor => _appColor;
 
-  MainViewModel() {
-    MainViewModel._instance = this;
+  MainViewModel._() {
     init();
   } 
 
   static MainViewModel instance() {
     if(_instance == null){
-      MainViewModel();
+      MainViewModel._instance = MainViewModel._();
     }
     return _instance!;
   }
