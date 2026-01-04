@@ -1,7 +1,7 @@
 import 'package:blog_beispiel/main_view_model.dart';
-import 'package:blog_beispiel/models/language.dart';
-import 'package:blog_beispiel/services/app_routes.dart';
-import 'package:blog_beispiel/services/language_service.dart';
+import 'package:blog_beispiel/domain/models/language.dart';
+import 'package:blog_beispiel/data/router/app_routes.dart';
+import 'package:blog_beispiel/data/language/language_service.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

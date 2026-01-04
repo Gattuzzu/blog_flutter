@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:blog_beispiel/models/blog.dart';
-import 'package:blog_beispiel/screens/blog_detail/blog_detail_state.dart';
-import 'package:blog_beispiel/services/app_routes.dart';
-import 'package:blog_beispiel/services/blog_repository.dart';
-import 'package:blog_beispiel/services/exceptions/app_exception.dart';
-import 'package:blog_beispiel/services/helper/result.dart';
+import 'package:blog_beispiel/domain/models/blog.dart';
+import 'package:blog_beispiel/ui/blog_detail/blog_detail_state.dart';
+import 'package:blog_beispiel/data/router/app_routes.dart';
+import 'package:blog_beispiel/data/repositorys/blog_repository.dart';
+import 'package:blog_beispiel/data/exceptions/app_exception.dart';
+import 'package:blog_beispiel/data/helper/result.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

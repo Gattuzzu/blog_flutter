@@ -79,3 +79,23 @@ class Blog {
     }
   }
 }
+
+
+/*
+{
+  "$collectionId": "blogs",
+  "$createdAt": "2025-12-01T15:02:27.717+00:00",
+  "$databaseId": "blog-db",
+  "$id": "692dae03aeefac9e0f82",
+  "$permissions": [],
+  "$sequence": 352,
+  "$updatedAt": "2025-12-05T14:01:30.232+00:00",
+  "comments": null,
+  "content": "Super! Best Blog App ever never. =S\n\n💪",
+  "headerImageUrl": null,
+  "title": "Neuer Blog ist toll!!",
+  "userIdsWithLikes": [
+      "my_user_id"
+  ]
+},
+*/

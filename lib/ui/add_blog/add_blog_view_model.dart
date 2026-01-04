@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:blog_beispiel/models/blog.dart';
-import 'package:blog_beispiel/services/app_routes.dart';
-import 'package:blog_beispiel/services/blog_repository.dart';
+import 'package:blog_beispiel/domain/models/blog.dart';
+import 'package:blog_beispiel/data/router/app_routes.dart';
+import 'package:blog_beispiel/data/repositorys/blog_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

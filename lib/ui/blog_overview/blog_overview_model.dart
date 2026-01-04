@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:blog_beispiel/screens/blog_overview/blog_overview_state.dart';
-import 'package:blog_beispiel/services/blog_repository.dart';
-import 'package:blog_beispiel/services/helper/result.dart';
+import 'package:blog_beispiel/ui/blog_overview/blog_overview_state.dart';
+import 'package:blog_beispiel/data/repositorys/blog_repository.dart';
+import 'package:blog_beispiel/data/helper/result.dart';
 import 'package:flutter/material.dart';
 
 class BlogOverviewModel extends ChangeNotifier {

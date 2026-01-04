@@ -1,4 +1,4 @@
-import 'package:blog_beispiel/services/persistence/local_persistence.dart';
+import 'package:blog_beispiel/data/persistence/local_persistence.dart';
 import 'package:flutter/material.dart';
 
 class MainViewModel extends ChangeNotifier {

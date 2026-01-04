@@ -1,4 +1,4 @@
-import 'package:blog_beispiel/screens/add_blog/add_blog_view_model.dart';
+import 'package:blog_beispiel/ui/add_blog/add_blog_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

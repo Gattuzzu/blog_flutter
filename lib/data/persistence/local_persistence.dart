@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:blog_beispiel/services/persistence/local_persistence_keys.dart';
+import 'package:blog_beispiel/data/persistence/local_persistence_keys.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LocalPersistence {

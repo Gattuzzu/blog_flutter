@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:blog_beispiel/models/blog.dart';
-import 'package:blog_beispiel/services/blog_service.dart';
-import 'package:blog_beispiel/services/exceptions/app_exception.dart';
-import 'package:blog_beispiel/services/helper/result.dart';
+import 'package:blog_beispiel/domain/models/blog.dart';
+import 'package:blog_beispiel/data/apis/blog_service.dart';
+import 'package:blog_beispiel/data/exceptions/app_exception.dart';
+import 'package:blog_beispiel/data/helper/result.dart';
 import 'package:flutter/material.dart';
 
 

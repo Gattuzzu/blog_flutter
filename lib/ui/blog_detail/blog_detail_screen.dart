@@ -1,7 +1,7 @@
-import 'package:blog_beispiel/models/blog.dart';
-import 'package:blog_beispiel/screens/blog_detail/blog_detail_state.dart';
-import 'package:blog_beispiel/screens/blog_detail/blog_detail_view_model.dart';
-import 'package:blog_beispiel/services/exceptions/app_exception.dart';
+import 'package:blog_beispiel/domain/models/blog.dart';
+import 'package:blog_beispiel/ui/blog_detail/blog_detail_state.dart';
+import 'package:blog_beispiel/ui/blog_detail/blog_detail_view_model.dart';
+import 'package:blog_beispiel/data/exceptions/app_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

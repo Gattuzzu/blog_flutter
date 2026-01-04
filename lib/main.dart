@@ -1,5 +1,5 @@
 import 'package:blog_beispiel/main_view_model.dart';
-import 'package:blog_beispiel/services/app_router.dart';
+import 'package:blog_beispiel/data/router/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
