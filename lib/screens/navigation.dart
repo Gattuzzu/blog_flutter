@@ -1,4 +1,4 @@
-import 'package:blog_beispiel/main.dart';
+import 'package:blog_beispiel/main_view_model.dart';
 import 'package:blog_beispiel/models/language.dart';
 import 'package:blog_beispiel/services/app_routes.dart';
 import 'package:blog_beispiel/services/language_service.dart';
@@ -31,7 +31,7 @@ class Navigation extends StatelessWidget {
               final color = colorList[index];
               return IconButton(
                 onPressed: () {
-                    MyAppState.changeColor(color);
+                    MainViewModel.instance().updateColor(color);
                     Scaffold.of(context).closeDrawer();
                   }, 
                 icon: Icon(Icons.square, color: color)

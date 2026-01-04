@@ -1,8 +1,9 @@
+import 'package:blog_beispiel/main_view_model.dart';
 import 'package:blog_beispiel/services/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
   // 1. Logging: Fängt Fehler im Flutter-Framework (z.B. Render-Fehler)
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -30,38 +31,29 @@ void main() {
     // Auch diese Fehler sollten idealerweise an Sentry/Crashlytics gesendet werden
     return true;
   };
-  
-  runApp(MyApp());
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(MyApp(viewModel: MainViewModel.instance()));
 }
 
-class MyApp extends StatefulWidget{
-  const MyApp({super.key});
+class MyApp extends StatelessWidget {
+  final MainViewModel viewModel;
+  const MyApp({super.key, required this.viewModel});
 
-  @override
-  State<StatefulWidget> createState() => MyAppState();
-
-}
-
-class MyAppState extends State {
-  static MyAppState? _thisWidget;
-  Color _appColor = Colors.deepPurple;
-
-  MyAppState();
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    MyAppState._thisWidget = this;
-    return MaterialApp.router(
-      title: 'Blog App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: _appColor),
-      ),
-      routerConfig: appRouter,
+    // ListenableBuilder sorgt dafür, dass die App neu baut, wenn notifyListeners() gerufen wird
+    return ListenableBuilder(
+      listenable: viewModel,
+      builder: (context, child) {
+        return MaterialApp.router(
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: viewModel.appColor),
+          ),
+          routerConfig: appRouter,
+        );
+      },
     );
-  }
-
-  static void changeColor(Color newColor) {
-    MyAppState._thisWidget?.setState(() => MyAppState._thisWidget?._appColor = newColor);
   }
 }
