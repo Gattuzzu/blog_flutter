@@ -1,10 +1,14 @@
+import 'package:blog_beispiel/data/logger/logger.util.dart';
 import 'package:blog_beispiel/di/get_it_setup.dart';
 import 'package:blog_beispiel/main_view_model.dart';
 import 'package:blog_beispiel/data/router/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 void main() async {
+  Logger.level = Level.info;
+
   // 1. Logging: Fängt Fehler im Flutter-Framework (z.B. Render-Fehler)
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -42,11 +46,14 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  final log = getLogger();
   final MainViewModel viewModel;
-  const MyApp({super.key, required this.viewModel});
+
+  MyApp({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
+    log.i("App wird gestartet!");
     // ListenableBuilder sorgt dafür, dass die App neu baut, wenn notifyListeners() gerufen wird
     return ListenableBuilder(
       listenable: viewModel,

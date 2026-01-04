@@ -1,15 +1,19 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:blog_beispiel/data/logger/logger.util.dart';
 import 'package:blog_beispiel/domain/models/blog.dart';
 import 'package:blog_beispiel/data/apis/blog_service.dart';
 import 'package:blog_beispiel/data/exceptions/app_exception.dart';
 import 'package:blog_beispiel/data/helper/result.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 
 @lazySingleton
 class BlogRepository extends ChangeNotifier {
+  final Logger log = getLogger();
+
   // Static instance + private Constructor for simple Singleton-approach
   static BlogRepository instance = BlogRepository._privateConstructor();
   BlogRepository._privateConstructor();
@@ -61,12 +65,16 @@ class BlogRepository extends ChangeNotifier {
 
   Future<Result<T>> _standardErrorCatch<T>(Future<T> Function() action) async {
     try{
-      return Success(await action());
+      Result<T> result = Success(await action());
+      log.i("Der Blog konnte erfolgreich geladen werden!");
+      return result;
 
     } on SocketException{
+      log.e("Beim Laden kam es zu einem Netzwerkfehler!");
       return Failure(NetworkException());
 
     } catch (e){
+      log.e("Der Blog konnte nicht geladen werden!");
       return Failure(ServerException(e.toString()));
     }
   }
