@@ -1,6 +1,29 @@
 # blog_beispiel
 
-A new Flutter project.
+Dieses Projekt ist im zusammenhang mit dem Kurs "Mobile Computing" erstellt worden.
+Das Ziel der App ist die anzeige eines Blog-Api. Dabei sollen die Grundfunktionalitäten von Flutter erlernt werden.
+
+## Aufbau des Projektes
+
+Die Ordner Struktur ist mithilfe des Schichten-Modells aufgebaut. Deshalb gibt es folgende 3 Order:
+
+    - lib/
+      |- data/
+      |- domain/
+      |- ui/
+
+Die einzelnen Screens sind anschliessend im Layer-First Model umgesetzt.
+So sieht der ui Ordner wie folgt aus:
+
+    - lib/ui/
+      |- add_blog/
+      |- blog_detail/
+      |- blog_overview/
+      |- navigation/
+      L second_screen.dart
+
+Im jeweiligen Ordner sind alle Dateien zu finden, welche für den jeweiligen Screen benötigt werden.
+
 
 ## Getting Started
 
