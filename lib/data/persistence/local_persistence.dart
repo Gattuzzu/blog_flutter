@@ -6,24 +6,52 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 
 class LocalPersistence {
+  static final instance = LocalPersistence._();
+
   final Logger log = getLogger();
   final storage = FlutterSecureStorage(
     aOptions: AndroidOptions(),
   );
 
+  // Privater Konstruktor
+  LocalPersistence._();
+
+  /*
+  *   Hauptfunktionen:
+  */
+  Future<String?> loadFromKey(String key) async {
+    String? value = await storage.read(key: key);
+    if(value != null){
+      log.i("Der Key \"$key\" konnte aus dem Lokalen Speicher geladen werden: $value");
+      return value;
+    }
+    log.e("Der Key \"$key\" konnte aus dem Lokalen Speicher nicht geladen werden!");
+    return null;
+  }
+
+  Future<void> saveToKey(String key, String value) async {
+    log.i("Der Key \"$key\" wird in den Lokalen Speicher mit dem Wert \"$value\" abgespeichert.");
+    await storage.write(key: key, value: value);
+  }
+
+  Future<void> removeKey(String key) async {
+    log.i("Der Key \"$key\" wird aus dem Lokalen Speicher gelöscht.");
+    return storage.delete(key: key);
+  }
+
+  /*
+  *   Hilfsfunktionen
+  */
   Future<Color?> loadAppColor() async {
-    String? colorString = await storage.read(key: LocalPersistenceKeys.appColorKey);
+    String? colorString = await loadFromKey(LocalPersistenceKeys.appColorKey);
     if(colorString != null){
-      log.i("App Farbe aus dem Lokalen Speicher geladen: $colorString");
       return Color(int.parse(colorString));
     }
-    log.e("Es wurde keine Farbe im Lokalen Speicher gefunden!");
     return null;
   }
 
   Future<void> saveAppColor(Color color) async {
     String colorString = color.toARGB32().toString();
-    log.i("App Farbe in den Lokalen Speicher gespeichert: $colorString");
-    await storage.write(key: LocalPersistenceKeys.appColorKey, value: colorString);
+    await saveToKey(LocalPersistenceKeys.appColorKey, colorString);
   }
 }

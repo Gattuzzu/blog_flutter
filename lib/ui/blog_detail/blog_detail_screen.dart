@@ -120,7 +120,7 @@ class BlogDetailScreen extends StatelessWidget{
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Text(blog.content)
+          child: Text(blog.content ?? "Kein Bloginhalt vorhanden")
         ),
         IconButton(
           icon: Icon(Icons.edit),
@@ -211,7 +211,7 @@ class BlogDetailScreen extends StatelessWidget{
       blog = actState.blog;
       return switch(viewModel.field!) {
         BlogField.title => _buildEditField(  viewModel, true,  blog.title),
-        BlogField.content => _buildEditField(viewModel, false, blog.content),
+        BlogField.content => _buildEditField(viewModel, false, blog.content ?? ""),
       };
     } else{
       return Text(errorDuringDevelopment);

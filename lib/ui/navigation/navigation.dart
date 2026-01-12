@@ -2,9 +2,12 @@ import 'package:blog_beispiel/main_view_model.dart';
 import 'package:blog_beispiel/domain/models/language.dart';
 import 'package:blog_beispiel/data/router/app_routes.dart';
 import 'package:blog_beispiel/data/language/language_service.dart';
+import 'package:blog_beispiel/ui/profile/profile_screen.dart';
+import 'package:blog_beispiel/ui/profile/profile_view_model.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class Navigation extends StatelessWidget {
   final List<Language> languageList = LanguageService().getLanguages();
@@ -21,7 +24,10 @@ class Navigation extends StatelessWidget {
           TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.blogOverview), child: Text("Overview")),
           TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.addBlog), child: Text("New Blog Entry")
           ),
-          TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.login), child: Text("Login")),
+          ChangeNotifierProvider<ProfileViewModel>(
+            create: (_) => ProfileViewModel(),
+            child: Profile(onPressed: () => Scaffold.of(context).closeDrawer()),
+          ),
           Expanded(
             child: Container()
           ),

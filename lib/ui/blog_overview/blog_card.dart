@@ -24,31 +24,11 @@ class BlogCard extends StatelessWidget {
               Text(blog.title, style: TextStyle(fontWeight: FontWeight.bold)),
 
               if(blog.headerImageUrl != null)
-                Column(
-                  children: [
-                    Image.network(
-                      blog.headerImageUrl!,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress){
-                        if(loadingProgress == null) return child;
-                        return const Center(
-                          child: CircularProgressIndicator()
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace){
-                        return const Icon(
-                          Icons.broken_image_outlined, 
-                          size: 50, 
-                          color: Colors.grey
-                        );
-                      },
-                    ),
-                    SizedBox(height: 5,),
-                  ],
-                ),
+                drawImage(blog.headerImageUrl!)
+              else
+                drawImage('https://picsum.photos/seed/${blog.id}/500'), // Es soll random Bild angezeigt werden
 
-              Text(blog.content),
+              Text(blog.contentPreview ?? "Kein Bloginhalt vorhanden"),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -65,4 +45,31 @@ class BlogCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget drawImage(String imageUrl){
+    return Column(
+      children: [
+        Image.network(
+          imageUrl,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress){
+            if(loadingProgress == null) return child;
+            return const Center(
+              child: CircularProgressIndicator()
+            );
+          },
+          errorBuilder: (context, error, stackTrace){
+            return const Icon(
+              Icons.broken_image_outlined, 
+              size: 50, 
+              color: Colors.grey
+            );
+          },
+        ),
+        SizedBox(height: 5,),
+      ],
+    );
+  }
+
 }

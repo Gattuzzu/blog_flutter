@@ -37,9 +37,10 @@ class AddBlogViewModel extends ChangeNotifier {
           }
           formKey.currentState!.save(); // Die Werte werden in das ViewModel geschrieben
           await addBlog(Blog(
+            author: 'Test',
             title: _title,
             content: _content,
-            publishedAt: DateTime.now(),
+            publishedAt: DateTime.now(), 
           ), context);
 
           // Kurz warten bevor weitergeleitet wird zur Overview. 

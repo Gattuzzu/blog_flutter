@@ -1,23 +1,32 @@
 class Blog {
   String id;
+  String author;
   String title;
-  String content;
+  String? contentPreview;
+  String? content;
   DateTime publishedAt;
   DateTime? lastUpdate;
   Object? comments;
   String? headerImageUrl;
-  bool isLikedByMe = false;
+  bool isLikedByMe;
+  int likes = 0;
   List<String>? userIdsWithLikes;
+  bool createdByMe;
 
   Blog({
     this.id = "0",
+    required this.author,
     required this.title,
+    this.contentPreview,
     required this.content,
     required this.publishedAt,
     this.lastUpdate,
     this.comments,
     this.headerImageUrl,
     this.userIdsWithLikes,
+    this.isLikedByMe = false,
+    this.likes = 0,
+    this.createdByMe = false,
   }){
     lastUpdate ??= publishedAt;
   }
@@ -26,28 +35,34 @@ class Blog {
     return switch (json) {
       {
         // 1. & 2. Korrekter Key ($id) und korrekter Typ (String)
-        r'$id': String id, 
+        'id': int id, 
+        'author': String author,
         'title': String title,
-        'content': String content,
         // 3. Datum als String holen, um es später zu parsen
-        r'$createdAt': String createdAt, 
-        r'$updatedAt': String lastUpdate,
-        'comments': Object? comments,
-        'headerImageUrl': String? headerImageUrl,
-        'userIdsWithLikes': List<dynamic> userIdsWithLikes,
+        'createdAt': String createdAt, 
+        'updatedAt': String lastUpdate,
+
+        'likes': int likes,
+        'likedByMe': bool likedByMe,
+        'createdByMe': bool createdByMe,
       } =>
         Blog(
-          id: id,
+          id: id.toString(),
+          author: author,
           title: title,
-          content: content,
+          contentPreview: json['contentPreview'] as String?,
+          content: json['content'] as String?,
           // String in DateTime umwandeln
           publishedAt: DateTime.parse(createdAt), 
           lastUpdate: DateTime.parse(lastUpdate),
           // Optional: Falls du ein Bild hast, das auch null sein kann:
           // headerImageUrl: json['headerImageUrl'] as String?,
-          comments: comments,
-          headerImageUrl: headerImageUrl,
-          userIdsWithLikes: userIdsWithLikes.cast<String>(),
+          comments: json['comments'] as Object?,
+          headerImageUrl: json['headerImageUrl'] as String?,
+          userIdsWithLikes: (json['userIdsWithLikes'] as List<dynamic>?)?.cast<String>(),
+          isLikedByMe: likedByMe,
+          likes: likes,
+          createdByMe: createdByMe,
         ),
       _ => throw const FormatException('Failed to convert from json to Blog'),
     };
@@ -56,9 +71,8 @@ class Blog {
   Map<String, String> toJson() {
     return {
       "title": title,
-      "content": content,
-      r'$createdAt': publishedAt.toIso8601String(),
-      r'$updatedAt': DateTime.now().toIso8601String(), // wenn das Objekt in Json geparst wird, gehe ich davon aus, dass es geänder wird.
+      "content": content ?? "",
+      // "headerImageUrl": headerImageUrl ?? "",
     };
   }
 

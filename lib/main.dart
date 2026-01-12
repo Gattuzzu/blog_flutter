@@ -1,3 +1,5 @@
+import 'package:app_links/app_links.dart';
+import 'package:blog_beispiel/data/auth/auth_repository.dart';
 import 'package:blog_beispiel/data/logger/logger.util.dart';
 import 'package:blog_beispiel/di/get_it_setup.dart';
 import 'package:blog_beispiel/main_view_model.dart';
@@ -56,6 +58,20 @@ void main() async {
   } else{
     await GlobalConfiguration().loadFromAsset("dev_settings");
   }
+
+  // 1. Auth Status prüfen (wartet nicht zwingend auf Ergebnis, kann async sein)
+  await AuthRepository.instance.checkLoginStatus();
+
+  // 2. Deep Links Setup
+  final appLinks = AppLinks();
+  appLinks.uriLinkStream.listen((uri) {
+    if (uri.scheme == 'blogapp' && uri.host == 'login-callback') {
+      final code = uri.queryParameters['code'];
+      if (code != null) {
+        AuthRepository.instance.handleAuthCallback(code);
+      }
+    }
+  });
 
   runApp(MyApp(viewModel: MainViewModel.instance()));
 }

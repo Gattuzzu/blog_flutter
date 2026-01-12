@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class MainViewModel extends ChangeNotifier {
   static MainViewModel? _instance;
   Color _appColor = Colors.deepPurple;
-  final LocalPersistence _persistence = LocalPersistence();
+  final LocalPersistence _persistence = LocalPersistence.instance;
 
   Color get appColor => _appColor;
 
