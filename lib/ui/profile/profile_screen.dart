@@ -19,7 +19,7 @@ class Profile extends StatelessWidget{
               : Text("Login"),
           ),
           if(viewModel.isAutenticated)
-            Text("Eingeloggt als: "),
+            Text("Eingeloggt als: ${viewModel.userName}"),
         ],
       )
     );

@@ -7,11 +7,14 @@ class ProfileViewModel extends ChangeNotifier {
   
   // Lokaler State
   bool _isAuthenticated = false;
+  String _userName = "";
 
   bool get isAutenticated => _isAuthenticated;
+  String get userName => _userName;
   
   // Listener Callbacks speichern für Dispose
   VoidCallback? _authListener;
+  VoidCallback? _userNameListener;
 
   ProfileViewModel() {
     _init();
@@ -19,12 +22,19 @@ class ProfileViewModel extends ChangeNotifier {
 
   void _init() {
     _isAuthenticated = _repository.isAuthenticated.value;
+    _userName = _repository.username.value ?? "";
     
     _authListener = () {
       _isAuthenticated = _repository.isAuthenticated.value;
       notifyListeners();
     };
     _repository.isAuthenticated.addListener(_authListener!);
+
+    _userNameListener = () {
+      _userName = _repository.username.value ?? "";
+      notifyListeners();
+    };
+    _repository.username.addListener(_userNameListener!);
   }
 
   @override
@@ -32,6 +42,11 @@ class ProfileViewModel extends ChangeNotifier {
     if (_authListener != null) {
       _repository.isAuthenticated.removeListener(_authListener!);
     }
+
+    if(_userNameListener != null){
+      _repository.username.removeListener(_userNameListener!);
+    }
+
     super.dispose();
   }
   
