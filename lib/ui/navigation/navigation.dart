@@ -1,3 +1,4 @@
+import 'package:blog_beispiel/di/get_it_setup.dart';
 import 'package:blog_beispiel/main_view_model.dart';
 import 'package:blog_beispiel/domain/models/language.dart';
 import 'package:blog_beispiel/data/router/app_routes.dart';
@@ -25,7 +26,7 @@ class Navigation extends StatelessWidget {
           TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.addBlog), child: Text("New Blog Entry")
           ),
           ChangeNotifierProvider<ProfileViewModel>(
-            create: (_) => ProfileViewModel(),
+            create: (_) => getIt<ProfileViewModel>(),
             child: Profile(onPressed: () => Scaffold.of(context).closeDrawer()),
           ),
           Expanded(
@@ -37,7 +38,7 @@ class Navigation extends StatelessWidget {
               final color = colorList[index];
               return IconButton(
                 onPressed: () {
-                    MainViewModel.instance().updateColor(color);
+                    getIt<MainViewModel>().updateColor(color);
                     Scaffold.of(context).closeDrawer();
                   }, 
                 icon: Icon(Icons.square, color: color)

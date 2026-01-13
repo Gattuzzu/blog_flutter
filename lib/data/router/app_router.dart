@@ -1,4 +1,5 @@
 import 'package:blog_beispiel/data/logger/logger.util.dart';
+import 'package:blog_beispiel/di/get_it_setup.dart';
 import 'package:blog_beispiel/ui/add_blog/add_blog_view_model.dart';
 import 'package:blog_beispiel/ui/blog_detail/blog_detail_screen.dart';
 import 'package:blog_beispiel/ui/blog_detail/blog_detail_view_model.dart';
@@ -61,7 +62,7 @@ final GoRouter appRouter = GoRouter(
           pageBuilder: (context, state) {
               _logToNewRoute(state);
               return NoTransitionPage(child: ChangeNotifierProvider(
-              create: (_) => AddBlogViewModel(),
+              create: (_) => getIt<AddBlogViewModel>(),
               child: const AddBlog()
               )
             );
@@ -73,7 +74,7 @@ final GoRouter appRouter = GoRouter(
             _logToNewRoute(state);
             return NoTransitionPage(
               child: ChangeNotifierProvider(
-                create: (_) => BlogOverviewModel(),
+                create: (_) => getIt<BlogOverviewModel>(),
                 child: const BlogOverview()
               ),
             );
@@ -86,7 +87,7 @@ final GoRouter appRouter = GoRouter(
                 final blogId = state.pathParameters['id'] ?? '';
                 return NoTransitionPage(
                   child: ChangeNotifierProvider(
-                    create: (_) => BlogDetailViewModel(blogId: (blogId).toString()),
+                    create: (_) => getIt<BlogDetailViewModel>(param1: (blogId).toString()),
                     child: BlogDetailScreen(blogId: blogId)
                   )
                 );

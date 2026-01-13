@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:blog_beispiel/data/auth/auth_repository.dart';
 import 'package:blog_beispiel/data/logger/logger.util.dart';
+import 'package:blog_beispiel/di/get_it_setup.dart';
 import 'package:blog_beispiel/domain/models/blog.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
+import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
+@lazySingleton
 class BlogService {
   final _uri = GlobalConfiguration().getValue('blogApiUrl');
   final Logger log = getLogger();
@@ -16,11 +19,8 @@ class BlogService {
       "Content-Type" : "application/json",
     };
 
-  static BlogService instance = BlogService._();
-  BlogService._();
-
   Future<Map<String, String>> _getHeaders() async {
-    String? accessToken = await AuthRepository.instance.getAccessToken();
+    String? accessToken = await getIt<AuthRepository>().getAccessToken();
     if(accessToken != null){
       return {
         ... _staticHeaders,

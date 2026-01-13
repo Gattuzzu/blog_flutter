@@ -1,27 +1,21 @@
 import 'package:blog_beispiel/data/persistence/local_persistence.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class MainViewModel extends ChangeNotifier {
-  static MainViewModel? _instance;
   Color _appColor = Colors.deepPurple;
-  final LocalPersistence _persistence = LocalPersistence.instance;
+  final LocalPersistence persistence;
 
   Color get appColor => _appColor;
 
-  MainViewModel._() {
+  MainViewModel({required this.persistence}) {
     init();
   } 
 
-  static MainViewModel instance() {
-    if(_instance == null){
-      MainViewModel._instance = MainViewModel._();
-    }
-    return _instance!;
-  }
-
   // Beim Start der App aufrufen
   Future<void> init() async {
-    Color? savedColor = await _persistence.loadAppColor();
+    Color? savedColor = await persistence.loadAppColor();
     if (savedColor != null) {
       _appColor = savedColor;
       notifyListeners(); // UI informieren
@@ -31,6 +25,6 @@ class MainViewModel extends ChangeNotifier {
   void updateColor(Color newColor) async {
     _appColor = newColor;
     notifyListeners(); // UI sofort aktualisieren
-    await _persistence.saveAppColor(newColor); // Dauerhaft speichern
+    await persistence.saveAppColor(newColor); // Dauerhaft speichern
   }
 }

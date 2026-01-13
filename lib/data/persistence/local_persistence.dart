@@ -3,18 +3,15 @@ import 'dart:ui';
 import 'package:blog_beispiel/data/logger/logger.util.dart';
 import 'package:blog_beispiel/data/persistence/local_persistence_keys.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
+@lazySingleton
 class LocalPersistence {
-  static final instance = LocalPersistence._();
-
   final Logger log = getLogger();
   final storage = FlutterSecureStorage(
     aOptions: AndroidOptions(),
   );
-
-  // Privater Konstruktor
-  LocalPersistence._();
 
   /*
   *   Hauptfunktionen:

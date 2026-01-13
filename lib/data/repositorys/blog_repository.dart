@@ -14,11 +14,9 @@ import 'package:logger/logger.dart';
 class BlogRepository extends ChangeNotifier {
   final Logger log = getLogger();
 
-  // Static instance + private Constructor for simple Singleton-approach
-  static BlogRepository instance = BlogRepository._privateConstructor();
-  BlogRepository._privateConstructor();
+  final BlogService service;
 
-  var service = BlogService.instance;
+  BlogRepository({required this.service});
 
   /// Returns all blog posts ordered by publishedAt descending.
   /// Simulates network delay.

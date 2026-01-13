@@ -60,7 +60,7 @@ void main() async {
   }
 
   // 1. Auth Status prüfen (wartet nicht zwingend auf Ergebnis, kann async sein)
-  await AuthRepository.instance.checkLoginStatus();
+  await getIt<AuthRepository>().checkLoginStatus();
 
   // 2. Deep Links Setup
   final appLinks = AppLinks();
@@ -68,12 +68,12 @@ void main() async {
     if (uri.scheme == 'blogapp' && uri.host == 'login-callback') {
       final code = uri.queryParameters['code'];
       if (code != null) {
-        AuthRepository.instance.handleAuthCallback(code);
+        getIt<AuthRepository>().handleAuthCallback(code);
       }
     }
   });
 
-  runApp(MyApp(viewModel: MainViewModel.instance()));
+  runApp(MyApp(viewModel: getIt<MainViewModel>()));
 }
 
 class MyApp extends StatelessWidget {

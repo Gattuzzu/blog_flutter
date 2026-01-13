@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'package:blog_beispiel/di/get_it_setup.dart';
 import 'package:blog_beispiel/domain/models/blog.dart';
 import 'package:blog_beispiel/data/router/app_routes.dart';
 import 'package:blog_beispiel/data/repositorys/blog_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:injectable/injectable.dart';
 
 enum AddBlogPageState {loading, editing, done}
 
+@injectable
 class AddBlogViewModel extends ChangeNotifier {
   AddBlogPageState _pageState = AddBlogPageState.editing;
   final formKey = GlobalKey<FormState>();
@@ -14,8 +17,6 @@ class AddBlogViewModel extends ChangeNotifier {
   String _content = "";
 
   AddBlogPageState get pageState => _pageState;
-
-  AddBlogViewModel();
 
   // Form Validatoren 
   String? titleValidator(String? value) => Blog.titleValidator(value);
@@ -77,7 +78,7 @@ class AddBlogViewModel extends ChangeNotifier {
     notifyListeners();
 
     await Future.delayed(const Duration(milliseconds: 5000));
-    await BlogRepository.instance.addBlogPost(blog);
+    await getIt<BlogRepository>().addBlogPost(blog);
 
     _pageState = AddBlogPageState.done;
     if(!context.mounted) return; // Bevor man eine notifyListener ausgeführt wird, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.

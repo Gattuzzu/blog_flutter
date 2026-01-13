@@ -5,17 +5,21 @@ import 'package:blog_beispiel/data/persistence/local_persistence.dart';
 import 'package:blog_beispiel/data/persistence/local_persistence_keys.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
 import 'keycloak_data_source.dart';
 
+@lazySingleton
 class AuthRepository {
-  static final instance = AuthRepository._init();
   static final Logger log = Logger();
-  AuthRepository._init();
+  final KeycloakDataSource keycloakDataSource;
+  final LocalPersistence localPersistence;
 
   final ValueNotifier<bool> isAuthenticated = ValueNotifier(false);
   final ValueNotifier<String?> username = ValueNotifier(null);
+
+  AuthRepository({required this.keycloakDataSource, required this.localPersistence});
 
   // 1. PKCE Initialisierung
   Future<Uri> initAuthFlow() async {
@@ -23,17 +27,17 @@ class AuthRepository {
     final challenge = _generateCodeChallenge(verifier);
 
     // WICHTIG: Verifier speichern, wir brauchen ihn nach dem Redirect wieder!
-    await LocalPersistence.instance.saveToKey(LocalPersistenceKeys.codeVerifierKey, verifier);
+    await localPersistence.saveToKey(LocalPersistenceKeys.codeVerifierKey, verifier);
 
-    return KeycloakDataSource.instance.getAuthorizationUri(challenge);
+    return keycloakDataSource.getAuthorizationUri(challenge);
   }
 
   // 2. Login abschliessen (nach Redirect)
   Future<void> handleAuthCallback(String code) async {
-    final verifier = await LocalPersistence.instance.loadFromKey(LocalPersistenceKeys.codeVerifierKey);
+    final verifier = await localPersistence.loadFromKey(LocalPersistenceKeys.codeVerifierKey);
     if (verifier == null) throw Exception("Code Verifier not found!");
 
-    final tokens = await KeycloakDataSource.instance.exchangeCodeForToken(
+    final tokens = await keycloakDataSource.exchangeCodeForToken(
       code,
       verifier,
     );
@@ -45,7 +49,7 @@ class AuthRepository {
   }
 
   Future<void> checkLoginStatus() async {
-    final token = await LocalPersistence.instance.loadFromKey(LocalPersistenceKeys.accessTokenKey);
+    final token = await localPersistence.loadFromKey(LocalPersistenceKeys.accessTokenKey);
     if (token != null) {
       isAuthenticated.value = true;
       _setUserName();
@@ -57,18 +61,18 @@ class AuthRepository {
 
   Future<void> _saveTokens(Map<String, dynamic> tokens) async {
     if (tokens[LocalPersistenceKeys.accessTokenKey] != null) {
-      await LocalPersistence.instance.saveToKey(
+      await localPersistence.saveToKey(
         LocalPersistenceKeys.accessTokenKey,
         tokens[LocalPersistenceKeys.accessTokenKey],
       );
     }
     if (tokens[LocalPersistenceKeys.refreshTokenKey] != null) {
-      await LocalPersistence.instance.saveToKey(
+      await localPersistence.saveToKey(
         LocalPersistenceKeys.refreshTokenKey,
         tokens[LocalPersistenceKeys.refreshTokenKey],
       );
     }
-    await LocalPersistence.instance.removeKey(LocalPersistenceKeys.codeVerifierKey);
+    await localPersistence.removeKey(LocalPersistenceKeys.codeVerifierKey);
   }
 
   // Helper: PKCE Generierung
@@ -85,7 +89,7 @@ class AuthRepository {
   }
 
   Future<String?> getAccessToken() =>
-      LocalPersistence.instance.loadFromKey(LocalPersistenceKeys.accessTokenKey);
+      localPersistence.loadFromKey(LocalPersistenceKeys.accessTokenKey);
 
   Future<void> _setUserName() async {
     Map<String, dynamic>? data = await _getAllUserData();
@@ -124,8 +128,8 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
-    await LocalPersistence.instance.removeKey(LocalPersistenceKeys.accessTokenKey);
-    await LocalPersistence.instance.removeKey(LocalPersistenceKeys.refreshTokenKey);
+    await localPersistence.removeKey(LocalPersistenceKeys.accessTokenKey);
+    await localPersistence.removeKey(LocalPersistenceKeys.refreshTokenKey);
     isAuthenticated.value = false;
     username.value = null;
   }

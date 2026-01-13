@@ -7,10 +7,13 @@ import 'package:blog_beispiel/data/exceptions/app_exception.dart';
 import 'package:blog_beispiel/data/helper/result.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class BlogDetailViewModel extends ChangeNotifier {
   BlogDetailState _state = BlogDetailInitial();
   final formKey = GlobalKey<FormState>();
+  final BlogRepository repository;
 
   BlogField? _field;
   String? _title;
@@ -18,6 +21,10 @@ class BlogDetailViewModel extends ChangeNotifier {
 
   BlogDetailState get state => _state;
   BlogField? get field => _field;
+
+  BlogDetailViewModel({required this.repository, @factoryParam required String blogId}) {
+    readBlogWithLoadingState(blogId);
+  }
 
   void setTitle(String? value) => _title = value;
   void setContent(String? value) => _content = value;
@@ -49,10 +56,6 @@ class BlogDetailViewModel extends ChangeNotifier {
   String? titleValidator(String? value) => Blog.titleValidator(value);
   String? contentValidator(String? value) => Blog.contentValidator(value);
 
-  BlogDetailViewModel({required String blogId}) {
-    readBlogWithLoadingState(blogId);
-  }
-
   Future<void> readBlogWithLoadingState(String blogId) async {
     _state = BlogDetailLoading();
     notifyListeners();  // Löst Rebuild aus
@@ -61,7 +64,7 @@ class BlogDetailViewModel extends ChangeNotifier {
   }
 
   Future<void> _readBlog(String blogId) async {
-    var result = await BlogRepository.instance.getBlogPost(blogId);
+    var result = await repository.getBlogPost(blogId);
 
     _state = switch(result){
       Success() => BlogDetailLoaded(result.data),
@@ -72,7 +75,7 @@ class BlogDetailViewModel extends ChangeNotifier {
   }
 
   Future<void> toggleLike(String blogId) async {
-    await BlogRepository.instance.toggleLikeInfo(blogId);
+    await repository.toggleLikeInfo(blogId);
     await readBlogWithLoadingState(blogId);
   }
 
@@ -115,7 +118,7 @@ class BlogDetailViewModel extends ChangeNotifier {
       _state = BlogDetailUpdating(actState.blog);
       notifyListeners();
 
-      await BlogRepository.instance.updateBlogPost(blogId: blogId, title: title, content: content);
+      await repository.updateBlogPost(blogId: blogId, title: title, content: content);
       if(!context.mounted) return; // Bevor der BuildContext in der nächsten Methode übergeben werden kann, muss geprüft werden, dass er noch im sichtbaren tree von Flutter ist.
       await _readBlog(blogId); // Löst Rebuild aus
       
@@ -130,7 +133,7 @@ class BlogDetailViewModel extends ChangeNotifier {
       _state = BlogDetailDeleting(actState.blog);
       notifyListeners();
       
-      await BlogRepository.instance.deleteBlogPost(blogId);
+      await repository.deleteBlogPost(blogId);
 
       _state = BlogDetailInitial();
       if(!context.mounted) return; // Bevor man eine Methode auf dem context ausgeführen kann, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.

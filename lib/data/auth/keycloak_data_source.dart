@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class KeycloakDataSource {
-  static final instance = KeycloakDataSource._init();
-  KeycloakDataSource._init();
-
   static const String _baseUrl =
       'https://d-cap-keyclaok.kindbay-711f60b2.westeurope.azurecontainerapps.io/realms/blog';
   static const String _clientId = 'flutter-blog';

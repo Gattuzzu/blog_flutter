@@ -3,11 +3,14 @@ import 'package:blog_beispiel/ui/blog_overview/blog_overview_state.dart';
 import 'package:blog_beispiel/data/repositorys/blog_repository.dart';
 import 'package:blog_beispiel/data/helper/result.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class BlogOverviewModel extends ChangeNotifier {
   BlogOverviewState _state = BlogOverviewInitial();
+  final BlogRepository repository;
 
-  BlogOverviewModel() {
+  BlogOverviewModel({required this.repository}) {
     readBlogsWithLoadingState();
   }
 
@@ -23,7 +26,7 @@ class BlogOverviewModel extends ChangeNotifier {
     
     notifyListeners();  // Löst Rebuild aus
 
-    var result = await BlogRepository.instance.getBlogPosts();
+    var result = await repository.getBlogPosts();
 
     switch(result){
       case Success(data: var blogs): _state = BlogOverviewLoaded(blogs);
@@ -34,7 +37,7 @@ class BlogOverviewModel extends ChangeNotifier {
   }
 
   Future<void> toggleLike(String blogId) async {
-    await BlogRepository.instance.toggleLikeInfo(blogId);
+    await repository.toggleLikeInfo(blogId);
     await readBlogsWithLoadingState();
   }
 }
