@@ -71,14 +71,15 @@ class BlogOverview extends StatelessWidget{
               if(viewModel.state case BlogOverviewLoading() || BlogOverviewUpdating())
                 const Center(child: CircularProgressIndicator()),
               
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: FloatingActionButton(
-                  onPressed: () => _onAddBlog(context),
-                  child: const Icon(Icons.add),
-                )
-              )
+              if(viewModel.isAuthenticated)
+                Positioned(
+                  bottom: 20,
+                  right: 20,
+                  child: FloatingActionButton(
+                    onPressed: () => _onAddBlog(context),
+                    child: const Icon(Icons.add),
+                  )
+                ),
             ],
           )
         )

@@ -39,9 +39,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i428.BlogRepository>(
       () => _i428.BlogRepository(service: gh<_i914.BlogService>()),
     );
-    gh.factory<_i549.BlogOverviewModel>(
-      () => _i549.BlogOverviewModel(repository: gh<_i428.BlogRepository>()),
-    );
     gh.lazySingleton<_i157.AuthRepository>(
       () => _i157.AuthRepository(
         keycloakDataSource: gh<_i594.KeycloakDataSource>(),
@@ -50,12 +47,19 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factoryParam<_i461.BlogDetailViewModel, String, dynamic>(
       (blogId, _) => _i461.BlogDetailViewModel(
-        repository: gh<_i428.BlogRepository>(),
+        blogRepository: gh<_i428.BlogRepository>(),
+        authRepository: gh<_i157.AuthRepository>(),
         blogId: blogId,
       ),
     );
     gh.factory<_i1051.MainViewModel>(
       () => _i1051.MainViewModel(persistence: gh<_i792.LocalPersistence>()),
+    );
+    gh.factory<_i549.BlogOverviewModel>(
+      () => _i549.BlogOverviewModel(
+        blogRepository: gh<_i428.BlogRepository>(),
+        authRepository: gh<_i157.AuthRepository>(),
+      ),
     );
     gh.factory<_i168.ProfileViewModel>(
       () => _i168.ProfileViewModel(repository: gh<_i157.AuthRepository>()),

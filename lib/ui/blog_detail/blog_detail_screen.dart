@@ -77,41 +77,48 @@ class BlogDetailScreen extends StatelessWidget{
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
-        IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () => {viewModel.setPageStateToEdit(BlogField.title)},
-        ),
+
+        if(viewModel.isAutenticated)
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => {viewModel.setPageStateToEdit(BlogField.title)},
+          ),
       ],
     );
   }
 
   Widget _buildImage(BuildContext context, BlogDetailViewModel viewModel, Blog blog){
     if (blog.headerImageUrl != null) {
-      return Column(
-        children: [
-          Image.network(
-            blog.headerImageUrl!,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress){
-              if(loadingProgress == null) return child;
-              return const Center(
-                child: CircularProgressIndicator()
-              );
-            },
-            errorBuilder: (context, error, stackTrace){
-              return const Icon(
-                Icons.broken_image_outlined, 
-                size: 50, 
-                color: Colors.grey
-              );
-            },
-          ),
-          const SizedBox(height: 5),
-        ],
-      );
+      return _drawImage(context, viewModel, blog, blog.headerImageUrl!);
     }
-    return const SizedBox.shrink();
+
+    return _drawImage(context, viewModel, blog, 'https://picsum.photos/seed/${blog.id}/500'); // Es soll ein random Bild angezeigt werden
+  }
+
+  Widget _drawImage(BuildContext context, BlogDetailViewModel viewModel, Blog blog, String url){
+    return Column(
+      children: [
+        Image.network(
+          url,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress){
+            if(loadingProgress == null) return child;
+            return const Center(
+              child: CircularProgressIndicator()
+            );
+          },
+          errorBuilder: (context, error, stackTrace){
+            return const Icon(
+              Icons.broken_image_outlined, 
+              size: 50, 
+              color: Colors.grey
+            );
+          },
+        ),
+        const SizedBox(height: 5),
+      ],
+    );
   }
 
   Widget _buildContent(/* BuildContext context, */ BlogDetailViewModel viewModel, Blog blog){
@@ -122,10 +129,12 @@ class BlogDetailScreen extends StatelessWidget{
         Expanded(
           child: Text(blog.content ?? "Kein Bloginhalt vorhanden")
         ),
-        IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () => {viewModel.setPageStateToEdit(BlogField.content)},
-        ),
+
+        if(viewModel.isAutenticated)
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => {viewModel.setPageStateToEdit(BlogField.content)},
+          ),
       ],
     );
   }
@@ -143,10 +152,12 @@ class BlogDetailScreen extends StatelessWidget{
             ),
           ],
         ),
-        IconButton(
-          icon: Icon(Icons.delete_forever),
-          onPressed: () => viewModel.deleteBlog(blog.id, context),
-        ), 
+
+        if(viewModel.isAutenticated)
+          IconButton(
+            icon: Icon(Icons.delete_forever),
+            onPressed: () => viewModel.deleteBlog(blog.id, context),
+          ), 
       ],
     );
   }

@@ -183,8 +183,8 @@ class AuthRepository {
     final exp = payload['exp'] as int;
     final now = DateTime.now().millisecondsSinceEpoch / 1000;
     
-    // Wir wollen 5 Minuten (300 Sek) vor Ablauf aktualisieren
-    final secondsUntilRefresh = (exp - now) - 300;
+    // Wir wollen 3 Minuten (180 Sek) vor Ablauf aktualisieren
+    final secondsUntilRefresh = (exp - now) - 180;
 
     if (secondsUntilRefresh > 0) {
       log.i("Nächster automatischer Refresh in $secondsUntilRefresh Sekunden.");

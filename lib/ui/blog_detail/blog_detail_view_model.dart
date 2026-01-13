@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:blog_beispiel/data/auth/auth_repository.dart';
 import 'package:blog_beispiel/domain/models/blog.dart';
 import 'package:blog_beispiel/ui/blog_detail/blog_detail_state.dart';
 import 'package:blog_beispiel/data/router/app_routes.dart';
@@ -13,17 +14,39 @@ import 'package:injectable/injectable.dart';
 class BlogDetailViewModel extends ChangeNotifier {
   BlogDetailState _state = BlogDetailInitial();
   final formKey = GlobalKey<FormState>();
-  final BlogRepository repository;
+  final BlogRepository blogRepository;
+  final AuthRepository authRepository;
 
   BlogField? _field;
   String? _title;
   String? _content;
+  bool _isAuthenticated = false;
+
+  VoidCallback? _authListener;
 
   BlogDetailState get state => _state;
   BlogField? get field => _field;
+  bool get isAutenticated => _isAuthenticated;
 
-  BlogDetailViewModel({required this.repository, @factoryParam required String blogId}) {
+  BlogDetailViewModel({required this.blogRepository, required this.authRepository, @factoryParam required String blogId}) {
+    _isAuthenticated = authRepository.isAuthenticated.value;
+
+    _authListener = () {
+      _isAuthenticated = authRepository.isAuthenticated.value;
+      notifyListeners();
+    };
+    authRepository.isAuthenticated.addListener(_authListener!);
+
     readBlogWithLoadingState(blogId);
+  }
+
+  @override
+  void dispose() {
+    if (_authListener != null) {
+      authRepository.isAuthenticated.removeListener(_authListener!);
+    }
+
+    super.dispose();
   }
 
   void setTitle(String? value) => _title = value;
@@ -64,7 +87,7 @@ class BlogDetailViewModel extends ChangeNotifier {
   }
 
   Future<void> _readBlog(String blogId) async {
-    var result = await repository.getBlogPost(blogId);
+    var result = await blogRepository.getBlogPost(blogId);
 
     _state = switch(result){
       Success() => BlogDetailLoaded(result.data),
@@ -75,7 +98,7 @@ class BlogDetailViewModel extends ChangeNotifier {
   }
 
   Future<void> toggleLike(String blogId) async {
-    await repository.toggleLikeInfo(blogId);
+    await blogRepository.toggleLikeInfo(blogId);
     await readBlogWithLoadingState(blogId);
   }
 
@@ -118,7 +141,7 @@ class BlogDetailViewModel extends ChangeNotifier {
       _state = BlogDetailUpdating(actState.blog);
       notifyListeners();
 
-      await repository.updateBlogPost(blogId: blogId, title: title, content: content);
+      await blogRepository.updateBlogPost(blogId: blogId, title: title, content: content);
       if(!context.mounted) return; // Bevor der BuildContext in der nächsten Methode übergeben werden kann, muss geprüft werden, dass er noch im sichtbaren tree von Flutter ist.
       await _readBlog(blogId); // Löst Rebuild aus
       
@@ -133,7 +156,7 @@ class BlogDetailViewModel extends ChangeNotifier {
       _state = BlogDetailDeleting(actState.blog);
       notifyListeners();
       
-      await repository.deleteBlogPost(blogId);
+      await blogRepository.deleteBlogPost(blogId);
 
       _state = BlogDetailInitial();
       if(!context.mounted) return; // Bevor man eine Methode auf dem context ausgeführen kann, muss geprüft werden, ob das Widget noch im sichtbaren tree von Flutter ist.
