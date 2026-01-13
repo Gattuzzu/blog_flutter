@@ -47,4 +47,25 @@ class KeycloakDataSource {
       throw Exception('Failed to exchange token: ${response.body}');
     }
   }
+
+  Future<Map<String, dynamic>> refreshTokens(String refreshToken) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/protocol/openid-connect/token'),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: {
+        'grant_type': 'refresh_token',
+        'client_id': _clientId,
+        'refresh_token': refreshToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Keycloak liefert hier ein neues JSON mit access_token, refresh_token, etc.
+      return jsonDecode(response.body);
+    } else {
+      // Wenn das Refresh-Token abgelaufen ist (z.B. Session in Keycloak beendet),
+      // wirft dies eine Exception, die das AuthRepository zum Logout zwingt.
+      throw Exception('Failed to refresh token: ${response.body}');
+    }
+  }
 }

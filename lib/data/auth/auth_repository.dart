@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -15,9 +16,10 @@ class AuthRepository {
   static final Logger log = Logger();
   final KeycloakDataSource keycloakDataSource;
   final LocalPersistence localPersistence;
-
   final ValueNotifier<bool> isAuthenticated = ValueNotifier(false);
   final ValueNotifier<String?> username = ValueNotifier(null);
+
+  Timer? _refreshTimer;
 
   AuthRepository({required this.keycloakDataSource, required this.localPersistence});
 
@@ -48,30 +50,40 @@ class AuthRepository {
     _setUserName();
   }
 
+  // Beim App-Start aufrufen
   Future<void> checkLoginStatus() async {
     final token = await localPersistence.loadFromKey(LocalPersistenceKeys.accessTokenKey);
+    
     if (token != null) {
-      isAuthenticated.value = true;
-      _setUserName();
+      if (_isTokenExpired(token)) {
+        log.i("Token beim Start abgelaufen, versuche Refresh...");
+        await refreshAccessToken(); // Versuchen zu erneuern
+
+      } else {
+        log.i("Token ist noch gültig.");
+        isAuthenticated.value = true;
+        _setUserName();
+        _startRefreshTimer(token); // Hintergrund-Timer starten
+      }
+
     } else {
-      isAuthenticated.value = false;
-      username.value = null;
+      await logout();
     }
   }
 
   Future<void> _saveTokens(Map<String, dynamic> tokens) async {
-    if (tokens[LocalPersistenceKeys.accessTokenKey] != null) {
-      await localPersistence.saveToKey(
-        LocalPersistenceKeys.accessTokenKey,
-        tokens[LocalPersistenceKeys.accessTokenKey],
-      );
+    final accessToken = tokens[LocalPersistenceKeys.accessTokenKey];
+    final refreshToken = tokens[LocalPersistenceKeys.refreshTokenKey];
+
+    if (accessToken != null) {
+      await localPersistence.saveToKey(LocalPersistenceKeys.accessTokenKey, accessToken);
+      _startRefreshTimer(accessToken); // Timer neu starten mit neuem Token!
     }
-    if (tokens[LocalPersistenceKeys.refreshTokenKey] != null) {
-      await localPersistence.saveToKey(
-        LocalPersistenceKeys.refreshTokenKey,
-        tokens[LocalPersistenceKeys.refreshTokenKey],
-      );
+    
+    if (refreshToken != null) {
+      await localPersistence.saveToKey(LocalPersistenceKeys.refreshTokenKey, refreshToken);
     }
+
     await localPersistence.removeKey(LocalPersistenceKeys.codeVerifierKey);
   }
 
@@ -127,10 +139,70 @@ class AuthRepository {
     }
   }
 
+  // Prüft, ob ein Token abgelaufen ist (mit 1 Minute Puffer)
+  bool _isTokenExpired(String token) {
+    final payload = _decodeToken(token);
+    if (payload == null || !payload.containsKey('exp')) return true;
+
+    final expirationTime = payload['exp'] as int;
+    final currentTime = DateTime.now().millisecondsSinceEpoch / 1000;
+
+    // Wir ziehen 60 Sekunden ab, um das Token kurz VOR Ablauf zu erneuern
+    return currentTime >= (expirationTime - 60);
+  }
+
+  // Erneuert das AccessToken mittels RefreshToken
+  Future<void> refreshAccessToken() async {
+    final refreshToken = await localPersistence.loadFromKey(LocalPersistenceKeys.refreshTokenKey);
+    
+    if (refreshToken == null) {
+      await logout();
+      return;
+    }
+
+    try {
+      final newTokens = await keycloakDataSource.refreshTokens(refreshToken);
+      await _saveTokens(newTokens);
+      
+      isAuthenticated.value = true;
+      _setUserName();
+      log.i("Token erfolgreich automatisch erneuert.");
+    } catch (e) {
+      log.e("Refresh fehlgeschlagen: $e");
+      await logout(); // Wenn Refresh nicht geht (z.B. RefreshToken auch abgelaufen)
+    }
+  }
+
+  // Startet einen Timer, der berechnet, wann die nächste Erneuerung nötig ist
+  void _startRefreshTimer(String token) {
+    _refreshTimer?.cancel(); // Alten Timer stoppen
+
+    final payload = _decodeToken(token);
+    if (payload == null) return;
+
+    final exp = payload['exp'] as int;
+    final now = DateTime.now().millisecondsSinceEpoch / 1000;
+    
+    // Wir wollen 5 Minuten (300 Sek) vor Ablauf aktualisieren
+    final secondsUntilRefresh = (exp - now) - 300;
+
+    if (secondsUntilRefresh > 0) {
+      log.i("Nächster automatischer Refresh in $secondsUntilRefresh Sekunden.");
+      _refreshTimer = Timer(Duration(seconds: secondsUntilRefresh.toInt()), () {
+        refreshAccessToken();
+      });
+    } else {
+      // Falls es jetzt schon fast abgelaufen ist: Sofort!
+      refreshAccessToken();
+    }
+  }
+
   Future<void> logout() async {
+    _refreshTimer?.cancel(); // WICHTIG: Timer stoppen
     await localPersistence.removeKey(LocalPersistenceKeys.accessTokenKey);
     await localPersistence.removeKey(LocalPersistenceKeys.refreshTokenKey);
     isAuthenticated.value = false;
     username.value = null;
   }
+
 }
