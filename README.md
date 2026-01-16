@@ -25,6 +25,19 @@ So sieht der ui Ordner wie folgt aus:
 Im jeweiligen Ordner sind alle Dateien zu finden, welche für den jeweiligen Screen benötigt werden.
 
 
+### GetIt
+
+Beim entwickeln muss man zwingend immer folgenden Befehl absetzen:
+
+    dart run build_runner build --delete-conflicting-outputs
+
+Dieser Befehl hier ist sehr hilfreich, da er laufend die änderungen aufgreifft und das getIt updatet und nicht nur einmalig wie der build Befehl.
+
+    dart run build_runner watch --delete-conflicting-outputs
+
+Dieser bewirkt, dass man auch bei änderungen von Injections diese nachgeführt werden und funktionieren.
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
