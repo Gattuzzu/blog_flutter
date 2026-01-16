@@ -19,20 +19,20 @@ class LocalPersistence {
   Future<String?> loadFromKey(String key) async {
     String? value = await storage.read(key: key);
     if(value != null){
-      log.i("Der Key \"$key\" konnte aus dem Lokalen Speicher geladen werden: $value");
+      log.i("Der Key '$key' konnte aus dem Lokalen Speicher geladen werden: '$value'");
       return value;
     }
-    log.e("Der Key \"$key\" konnte aus dem Lokalen Speicher nicht geladen werden!");
+    log.e("Der Key '$key' konnte aus dem Lokalen Speicher nicht geladen werden!");
     return null;
   }
 
   Future<void> saveToKey(String key, String value) async {
-    log.i("Der Key \"$key\" wird in den Lokalen Speicher mit dem Wert \"$value\" abgespeichert.");
+    log.i("Der Key '$key' wird in den Lokalen Speicher mit dem Wert '$value' abgespeichert.");
     await storage.write(key: key, value: value);
   }
 
   Future<void> removeKey(String key) async {
-    log.i("Der Key \"$key\" wird aus dem Lokalen Speicher gelöscht.");
+    log.i("Der Key '$key' wird aus dem Lokalen Speicher gelöscht.");
     return storage.delete(key: key);
   }
 
