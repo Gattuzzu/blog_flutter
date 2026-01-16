@@ -52,7 +52,7 @@ extension GetItInjectableX on _i174.GetIt {
         blogId: blogId,
       ),
     );
-    gh.factory<_i1051.MainViewModel>(
+    gh.lazySingleton<_i1051.MainViewModel>(
       () => _i1051.MainViewModel(persistence: gh<_i792.LocalPersistence>()),
     );
     gh.factory<_i549.BlogOverviewModel>(

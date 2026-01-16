@@ -2,7 +2,7 @@ import 'package:blog_beispiel/data/persistence/local_persistence.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 
-@injectable
+@lazySingleton
 class MainViewModel extends ChangeNotifier {
   Color _appColor = Colors.deepPurple;
   final LocalPersistence persistence;
