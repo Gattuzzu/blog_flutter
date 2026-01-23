@@ -93,6 +93,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: viewModel.appColor),
           ),
           routerConfig: appRouter,
+          debugShowCheckedModeBanner: false,
         );
       },
     );
