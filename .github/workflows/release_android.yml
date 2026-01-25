@@ -65,8 +65,12 @@ jobs:
       - name: Upload to Play Store
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJsonKeyRaw: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-          packageName: com.deine.domain.appname
+          # Hier liegt der Fehler: serviceAccountJsonPlainText ist der korrekte Key
+          serviceAccountJsonPlainText: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          packageName: ch.hftm.blog_beispiel
+          
+          # Sicherstellen, dass der Pfad exakt stimmt
           releaseFiles: build/app/outputs/bundle/productionRelease/app-production-release.aab
+          
           track: internal # Hier wird der "Internal Test" Track gewählt
           status: completed

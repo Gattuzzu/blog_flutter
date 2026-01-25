@@ -47,4 +47,5 @@ app.*.map.json
 
 # Passwörter:
 upload-keystore.jks
+flutter-blog-*.json
 android/key.properties
