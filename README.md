@@ -124,3 +124,10 @@ Dies kann mit dem folgenden Befehl gemacht werden:<br>
 -> Wichtig ist, dass man das flavor angibt.<br>
 
     flutter build appbundle --flavor production
+
+
+## Workflow mit Github Actions erstellen
+
+Um den Keystore als String in einer Secret speichern zu können muss man die File in einen Base64 String umwandeln. Das geht unter Windows wie folgt:
+
+    [Convert]::ToBase64String([IO.File]::ReadAllBytes("upload-keystore.jks")) | clip

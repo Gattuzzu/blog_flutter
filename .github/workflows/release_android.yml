@@ -1,0 +1,72 @@
+name: Android Release to Play Store
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger bei neuen Tags wie v1.0.0
+
+  workflow_dispatch: # <--- Das fügt den manuellen Button hinzu
+    inputs:
+      release_note:
+        description: 'Was ist neu in diesem Build?'
+        required: false
+        default: 'Manuelles Update über GitHub Actions'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup Java & Flutter
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x' # Oder deine spezifische Version
+          channel: 'stable'
+
+      # Abhängigkeiten laden
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Android Signing vorbereiten
+      # Hier werden die Secrets aus GitHub in Dateien umgewandelt
+      - name: Decode Keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      # Die Version für die App zusammenstellen
+      - name: Extract version from pubspec.yaml
+        id: extract_version
+        run: |
+          # Extrahiert z.B. "1.2.3" aus "version: 1.2.3+1"
+          VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1 | xargs)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      # Build erstellen (App Bundle .aab ist Pflicht für Play Store)
+      - name: Build Android App Bundle
+        run:
+        # Wir extrahieren die Version aus der pubspec.yaml (z.B. 1.0.0) 
+        # und hängen die GitHub Run Number als Patch-Version an.
+          flutter build appbundle --flavor production --build-name="${{ steps.extract_version.outputs.VERSION }}.${{ github.run_number }}" --build-number=${{ github.run_number }}
+        env:
+          # Diese Variablen müssen in deiner build.gradle genutzt werden
+          APP_BUILD_NUMBER: ${{ github.run_number }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      # Upload zur Google Play Console (Interner Test-Track)
+      - name: Upload to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonKeyRaw: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          packageName: com.deine.domain.appname
+          releaseFiles: build/app/outputs/bundle/productionRelease/app-production-release.aab
+          track: internal # Hier wird der "Internal Test" Track gewählt
+          status: completed
