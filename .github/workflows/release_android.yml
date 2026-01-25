@@ -67,7 +67,7 @@ jobs:
         with:
           # Hier liegt der Fehler: serviceAccountJsonPlainText ist der korrekte Key
           serviceAccountJsonPlainText: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-          packageName: ch.hftm.blog_beispiel
+          packageName: ch.hftm.blog_beispiel.prod
           
           # Sicherstellen, dass der Pfad exakt stimmt
           releaseFiles: build/app/outputs/bundle/productionRelease/app-production-release.aab
