@@ -63,3 +63,64 @@ samples, guidance on mobile development, and a full API reference.
 
 ### Nur ein Blog abfragen:
   http -v "https://cloud.appwrite.io/v1/databases/blog-db/collections/blogs/documents/69397a018c57b1ee5e29" $appwriteProject $appwriteKey
+
+
+## Publishen
+
+### Keystore erstellen
+
+    keytool -genkey -v -keystore ./upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+
+Anschliessend muss man ein Passwort für den KeyStore im Terminal erstellen.<br>
+Die erstellte Datei (upload-keystore.jks) muss privat behandelt werden und darf nicht in das Repository Eingecheckt werden!
+
+Nun kann muss man eine Datei namens "key.properties" unter "android" erstellen, mit dem folgenden Inhalt:
+
+    storePassword=dein_passwort
+    keyPassword=dein_passwort
+    keyAlias=upload
+    storeFile=/User/name/upload-keystore.jks
+
+Das store und key Passwort ist das selbe.<br>
+Auch diese Datei darf auf keinen Fall eingecheckt werden, da diese Passwörter enthält!
+
+Nun muss noch das build.gradle.kts File angepasst werden.
+
+    import java.util.Properties
+    import java.io.FileInputStream
+
+    val keystoreProperties = Properties()
+    val keystorePropertiesFile = rootProject.file("key.properties")
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    }
+
+    android {
+      signingConfigs {
+        create("release") {
+          keyAlias = keystoreProperties["keyAlias"] as String
+          keyPassword = keystoreProperties["keyPassword"] as String
+          storeFile = keystoreProperties["storeFile"]?.let { file(it) }
+          storePassword = keystoreProperties["storePassword"] as String
+        }
+      }
+
+      buildTypes {
+        release {
+          signingConfig = signingConfigs.getByName("release")
+        }
+      }
+    }
+
+
+Vor dem Builden wird ein "flutter clean" empfohlen, damit mögliche falsche cached Files nicht fälschlicherweise in den Releasebuild kommen.<br>
+Anschliessend kann der Build ganz normal ausgeführt werden.
+
+### Builden
+
+Als erstes muss die App gebuildet werden.
+Dies kann mit dem folgenden Befehl gemacht werden:<br>
+-> Android bevorzugt AAB Android App Bundle Dateien.<br>
+-> Wichtig ist, dass man das flavor angibt.<br>
+
+    flutter build appbundle --flavor production
