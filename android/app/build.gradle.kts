@@ -35,16 +35,26 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Prüft, ob eine Build-Nummer von GitHub übergeben wurde, sonst Flutter-Standard
+        val envBuildNumber = System.getenv("APP_BUILD_NUMBER")
+        versionCode = envBuildNumber?.toInt() ?: flutter.versionCode
     }
 
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
-            storePassword = keystoreProperties["storePassword"] as String
+            // Versuche erst Umgebungsvariablen (GitHub), dann die lokale Datei
+            keyAlias = System.getenv("ANDROID_KEY_ALIAS") ?: keystoreProperties["keyAlias"] as? String
+            keyPassword = System.getenv("ANDROID_KEY_PASSWORD") ?: keystoreProperties["keyPassword"] as? String
+            storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD") ?: keystoreProperties["storePassword"] as? String
+            
+            val keystorePath = if (System.getenv("ANDROID_KEYSTORE_PASSWORD") != null) {
+                "upload-keystore.jks" // Der Name, den wir im GitHub Script vergeben haben
+            } else {
+                keystoreProperties["storeFile"] as? String
+            }
+            storeFile = keystorePath?.let { file(it) }
         }
     }
 
