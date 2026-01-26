@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:blog_beispiel/data/auth/auth_repository.dart';
-import 'package:blog_beispiel/data/logger/logger.util.dart';
-import 'package:blog_beispiel/di/get_it_setup.dart';
-import 'package:blog_beispiel/domain/models/blog.dart';
+import 'package:gattus_blog/data/auth/auth_repository.dart';
+import 'package:gattus_blog/data/logger/logger.util.dart';
+import 'package:gattus_blog/di/get_it_setup.dart';
+import 'package:gattus_blog/domain/models/blog.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';

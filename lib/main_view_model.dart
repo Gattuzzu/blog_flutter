@@ -1,4 +1,4 @@
-import 'package:blog_beispiel/data/persistence/local_persistence.dart';
+import 'package:gattus_blog/data/persistence/local_persistence.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 

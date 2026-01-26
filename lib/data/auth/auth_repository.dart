@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:blog_beispiel/data/persistence/local_persistence.dart';
-import 'package:blog_beispiel/data/persistence/local_persistence_keys.dart';
+import 'package:gattus_blog/data/persistence/local_persistence.dart';
+import 'package:gattus_blog/data/persistence/local_persistence_keys.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';

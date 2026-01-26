@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:blog_beispiel/data/logger/logger.util.dart';
-import 'package:blog_beispiel/domain/models/blog.dart';
-import 'package:blog_beispiel/data/apis/blog_service.dart';
-import 'package:blog_beispiel/data/exceptions/app_exception.dart';
-import 'package:blog_beispiel/data/helper/result.dart';
+import 'package:gattus_blog/data/logger/logger.util.dart';
+import 'package:gattus_blog/domain/models/blog.dart';
+import 'package:gattus_blog/data/apis/blog_service.dart';
+import 'package:gattus_blog/data/exceptions/app_exception.dart';
+import 'package:gattus_blog/data/helper/result.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';

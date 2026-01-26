@@ -1,4 +1,4 @@
-import 'package:blog_beispiel/ui/profile/profile_view_model.dart';
+import 'package:gattus_blog/ui/profile/profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

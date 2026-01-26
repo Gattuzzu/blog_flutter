@@ -1,4 +1,4 @@
-import 'package:blog_beispiel/domain/models/language.dart';
+import 'package:gattus_blog/domain/models/language.dart';
 
 List<Language> testLanguage = [
   Language(id: 1, name: "Deutsch", countryCode: "DE"),

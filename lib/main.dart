@@ -1,9 +1,9 @@
 import 'package:app_links/app_links.dart';
-import 'package:blog_beispiel/data/auth/auth_repository.dart';
-import 'package:blog_beispiel/data/logger/logger.util.dart';
-import 'package:blog_beispiel/di/get_it_setup.dart';
-import 'package:blog_beispiel/main_view_model.dart';
-import 'package:blog_beispiel/data/router/app_router.dart';
+import 'package:gattus_blog/data/auth/auth_repository.dart';
+import 'package:gattus_blog/data/logger/logger.util.dart';
+import 'package:gattus_blog/di/get_it_setup.dart';
+import 'package:gattus_blog/main_view_model.dart';
+import 'package:gattus_blog/data/router/app_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';

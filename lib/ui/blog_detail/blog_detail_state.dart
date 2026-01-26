@@ -1,4 +1,4 @@
-import 'package:blog_beispiel/domain/models/blog.dart';
+import 'package:gattus_blog/domain/models/blog.dart';
 
 enum BlogField {
   title("Title"), 

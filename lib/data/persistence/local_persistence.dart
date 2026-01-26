@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:blog_beispiel/data/logger/logger.util.dart';
-import 'package:blog_beispiel/data/persistence/local_persistence_keys.dart';
+import 'package:gattus_blog/data/logger/logger.util.dart';
+import 'package:gattus_blog/data/persistence/local_persistence_keys.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';

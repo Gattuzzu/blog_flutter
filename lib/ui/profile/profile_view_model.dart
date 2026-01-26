@@ -1,4 +1,4 @@
-import 'package:blog_beispiel/data/auth/auth_repository.dart';
+import 'package:gattus_blog/data/auth/auth_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:url_launcher/url_launcher.dart';

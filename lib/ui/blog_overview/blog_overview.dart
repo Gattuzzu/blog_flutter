@@ -1,7 +1,7 @@
-import 'package:blog_beispiel/ui/blog_overview/blog_card.dart';
-import 'package:blog_beispiel/ui/blog_overview/blog_overview_model.dart';
-import 'package:blog_beispiel/ui/blog_overview/blog_overview_state.dart';
-import 'package:blog_beispiel/data/router/app_routes.dart';
+import 'package:gattus_blog/ui/blog_overview/blog_card.dart';
+import 'package:gattus_blog/ui/blog_overview/blog_overview_model.dart';
+import 'package:gattus_blog/ui/blog_overview/blog_overview_state.dart';
+import 'package:gattus_blog/data/router/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:focus_detector/focus_detector.dart';

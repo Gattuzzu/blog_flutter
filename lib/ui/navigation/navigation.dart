@@ -1,10 +1,10 @@
-import 'package:blog_beispiel/di/get_it_setup.dart';
-import 'package:blog_beispiel/main_view_model.dart';
-import 'package:blog_beispiel/domain/models/language.dart';
-import 'package:blog_beispiel/data/router/app_routes.dart';
-import 'package:blog_beispiel/data/language/language_service.dart';
-import 'package:blog_beispiel/ui/profile/profile_screen.dart';
-import 'package:blog_beispiel/ui/profile/profile_view_model.dart';
+import 'package:gattus_blog/di/get_it_setup.dart';
+import 'package:gattus_blog/main_view_model.dart';
+import 'package:gattus_blog/domain/models/language.dart';
+import 'package:gattus_blog/data/router/app_routes.dart';
+import 'package:gattus_blog/data/language/language_service.dart';
+import 'package:gattus_blog/ui/profile/profile_screen.dart';
+import 'package:gattus_blog/ui/profile/profile_view_model.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

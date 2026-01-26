@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:blog_beispiel/di/get_it_setup.dart';
-import 'package:blog_beispiel/domain/models/blog.dart';
-import 'package:blog_beispiel/data/router/app_routes.dart';
-import 'package:blog_beispiel/data/repositorys/blog_repository.dart';
+import 'package:gattus_blog/di/get_it_setup.dart';
+import 'package:gattus_blog/domain/models/blog.dart';
+import 'package:gattus_blog/data/router/app_routes.dart';
+import 'package:gattus_blog/data/repositorys/blog_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
