@@ -13,11 +13,17 @@ class SecondScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: Center(
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(padding: EdgeInsets.all(20)),
-          onPressed: () => {context.pop()},
-          child: Text("Last Screen"),
-          )
+        child: Column(
+          children: [
+            Text("Function not yet implemented."),
+            SizedBox(height: 10),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(padding: EdgeInsets.all(20)),
+              onPressed: () => {context.pop()},
+              child: Text("Last Screen"),
+              ),
+          ],
+        )
       )
     );
   }
