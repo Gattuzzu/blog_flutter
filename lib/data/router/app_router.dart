@@ -1,3 +1,4 @@
+import 'package:gattus_blog/data/auth/auth_repository.dart';
 import 'package:gattus_blog/data/logger/logger.util.dart';
 import 'package:gattus_blog/di/get_it_setup.dart';
 import 'package:gattus_blog/ui/add_blog/add_blog_view_model.dart';
@@ -46,7 +47,7 @@ final GoRouter appRouter = GoRouter(
           body: child,
           
           drawer: Navigation(),
-          bottomNavigationBar: const BottomNavigation(),
+          bottomNavigationBar: BottomNavigation(isAuthenticated: getIt<AuthRepository>().isAuthenticated,),
         );
       },
       routes: [
