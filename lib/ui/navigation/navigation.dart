@@ -19,49 +19,51 @@ class Navigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
-        children: [
-          SizedBox(height: 15),
-          TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.blogOverview), child: Text("Overview")),
-          TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.addBlog), child: Text("New Blog Entry")
-          ),
-          ChangeNotifierProvider<ProfileViewModel>(
-            create: (_) => getIt<ProfileViewModel>(),
-            child: Profile(onPressed: () => Scaffold.of(context).closeDrawer()),
-          ),
-          Expanded(
-            child: Container()
-          ),
-          Text("Colors"),
-          Row(
-            children: List.generate(colorList.length, (index) {
-              final color = colorList[index];
-              return IconButton(
-                onPressed: () {
-                    getIt<MainViewModel>().updateColor(color);
-                    Scaffold.of(context).closeDrawer();
-                  }, 
-                icon: Icon(Icons.square, color: color)
-              );
-            }),
-          ),
-          Text("Language"),
-          Row(
-            children: List.generate(languageList.length, (index) {
-              final language = languageList[index];
-              return IconButton(
-                onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.secondScreen), 
-                icon: CountryFlag.fromCountryCode(
-                  language.countryCode, 
-                  theme: const ImageTheme(
-                    shape: RoundedRectangle(6),
-                  )
-                ),
-              );
-            }),
-          ),
-          SizedBox(height: 10)
-        ]
+      child: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 15),
+            TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.blogOverview), child: Text("Overview")),
+            TextButton(onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.addBlog), child: Text("New Blog Entry")
+            ),
+            ChangeNotifierProvider<ProfileViewModel>(
+              create: (_) => getIt<ProfileViewModel>(),
+              child: Profile(onPressed: () => Scaffold.of(context).closeDrawer()),
+            ),
+            Expanded(
+              child: Container()
+            ),
+            Text("Colors"),
+            Row(
+              children: List.generate(colorList.length, (index) {
+                final color = colorList[index];
+                return IconButton(
+                  onPressed: () {
+                      getIt<MainViewModel>().updateColor(color);
+                      Scaffold.of(context).closeDrawer();
+                    }, 
+                  icon: Icon(Icons.square, color: color)
+                );
+              }),
+            ),
+            Text("Language"),
+            Row(
+              children: List.generate(languageList.length, (index) {
+                final language = languageList[index];
+                return IconButton(
+                  onPressed: () => closeDrawerAndPushRoute(context, AppRoutes.secondScreen), 
+                  icon: CountryFlag.fromCountryCode(
+                    language.countryCode, 
+                    theme: const ImageTheme(
+                      shape: RoundedRectangle(6),
+                    )
+                  ),
+                );
+              }),
+            ),
+            SizedBox(height: 10)
+          ]
+        ),
       )
     );
   }
