@@ -68,7 +68,7 @@ class BottomNavigation extends StatelessWidget {
         } else {
           // Meldung anzeigen, dass man sich erst einloggen muss.
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: const Text("Bitte zuerst einloggen!"), backgroundColor: Theme.of(context).colorScheme.primary,),
+            SnackBar(content: const Text("Please login first!"), backgroundColor: Theme.of(context).colorScheme.primary,),
           );
         }
       }else{
