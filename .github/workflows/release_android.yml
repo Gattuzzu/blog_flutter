@@ -10,7 +10,7 @@ on:
       play_store_track:
         description: 'Wähle den Ziel-Track im Play Store'
         required: true
-        default: 'internal'
+        default: 'alpha'
         type: choice
         options:
           - internal
