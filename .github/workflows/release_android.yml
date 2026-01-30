@@ -17,7 +17,7 @@ on:
           - alpha
           # - beta
           # - production
-          
+
       release_note:
         description: 'Was ist neu in diesem Build?'
         required: false
@@ -84,4 +84,4 @@ jobs:
           releaseFiles: build/app/outputs/bundle/productionRelease/app-production-release.aab
           
           track: internal # Hier wird der "Internal Test" Track gewählt
-          status: complete # wenn die App in der PlayConsole fertig eingerichtet ist, kann dies auf "completed" umgestellt werden.
+          status: completed # wenn die App in der PlayConsole fertig eingerichtet ist, kann dies auf "completed" umgestellt werden.
