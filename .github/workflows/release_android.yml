@@ -83,5 +83,5 @@ jobs:
           # Sicherstellen, dass der Pfad exakt stimmt
           releaseFiles: build/app/outputs/bundle/productionRelease/app-production-release.aab
           
-          track: internal # Hier wird der "Internal Test" Track gewählt
+          track: ${{ github.event.inputs.play_store_track }}
           status: completed # wenn die App in der PlayConsole fertig eingerichtet ist, kann dies auf "completed" umgestellt werden.
