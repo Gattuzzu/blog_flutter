@@ -7,6 +7,17 @@ on:
 
   workflow_dispatch: # <--- Das fügt den manuellen Button hinzu
     inputs:
+      play_store_track:
+        description: 'Wähle den Ziel-Track im Play Store'
+        required: true
+        default: 'internal'
+        type: choice
+        options:
+          - internal
+          - alpha
+          # - beta
+          # - production
+          
       release_note:
         description: 'Was ist neu in diesem Build?'
         required: false
@@ -73,4 +84,4 @@ jobs:
           releaseFiles: build/app/outputs/bundle/productionRelease/app-production-release.aab
           
           track: internal # Hier wird der "Internal Test" Track gewählt
-          status: draft # wenn die App in der PlayConsole fertig eingerichtet ist, kann dies auf "completed" umgestellt werden.
+          status: complete # wenn die App in der PlayConsole fertig eingerichtet ist, kann dies auf "completed" umgestellt werden.
