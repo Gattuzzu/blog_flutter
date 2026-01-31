@@ -29,7 +29,7 @@ class BlogDetailScreen extends StatelessWidget{
         if (viewModel.state case BlogDetailEditing() || BlogDetailUpdating())
           _buildEditor(context, viewModel),
 
-        if (viewModel.state case BlogDetailLoading() || BlogDetailUpdating() || BlogDetailDeleting())
+        if (viewModel.state case BlogDetailLoading() || BlogDetailUpdating() || BlogDetailDeleting() || BlogDetailLikeUpdating())
           const Center(child: CircularProgressIndicator()),
       ],
     );
@@ -146,10 +146,7 @@ class BlogDetailScreen extends StatelessWidget{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(DateFormat('dd.MM.yyyy').format(blog.publishedAt)),
-            IconButton(
-              icon: Icon(blog.isLikedByMe ? Icons.favorite : Icons.heart_broken),
-              onPressed: () => viewModel.toggleLike(blog.id),
-            ),
+            drawLike(viewModel, blog),
           ],
         ),
 
@@ -263,6 +260,25 @@ class BlogDetailScreen extends StatelessWidget{
           onPressed: () => {viewModel.setPageStateToDone()}, // Cancel
           child: Text("Cancel")
         ),
+      ],
+    );
+  }
+
+    Widget drawLike(BlogDetailViewModel viewModel, Blog blog){
+    return Row(
+      children: [
+        if (viewModel.isAutenticated)
+          IconButton(
+            icon: Icon(blog.isLikedByMe ? Icons.favorite : Icons.heart_broken),
+            onPressed: () => viewModel.toggleLike(blogId, !blog.isLikedByMe),
+          )
+        else
+          ...[
+            const Icon(Icons.favorite),
+            const SizedBox(width: 5,),
+          ],
+          
+        Text(blog.likes.toString()),
       ],
     );
   }

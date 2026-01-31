@@ -123,6 +123,22 @@ class BlogService {
     }
   }
 
+  Future<void> changeLikeState(String id, bool like) async{
+    Map<String, String> headers = await _getHeaders();
+
+    final response = await http.put(
+      Uri.parse("$_uri/$id/like-info"),
+      headers: headers,
+      body: jsonEncode({
+        "likedByMe": like,
+      })
+    );
+
+    if(response.statusCode != 204){
+      throw Exception("Failed to patch Blog.");
+    }
+  }
+
   Future<void> deleteBlog(String id) async {
     Map<String, String> headers = await _getHeaders();
 

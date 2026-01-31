@@ -45,11 +45,8 @@ class BlogRepository extends ChangeNotifier {
   }
 
   /// Changes the like info of a blog post.
-  Future<Result<void>> toggleLikeInfo(String blogId) async {
-    // final blog = _blogs.firstWhere((blog) => blog.id == blogId);
-    // blog.isLikedByMe = !blog.isLikedByMe;
-
-    return Failure(Exception("Toggle Like is not yet implemented!"));
+  Future<Result<void>> toggleLikeInfo(String blogId, bool like) async {
+    return await _standardErrorCatch<void>(() async => await service.changeLikeState(blogId, like));
   }
 
   /// Updates a blog post with the given id.

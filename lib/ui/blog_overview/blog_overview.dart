@@ -62,8 +62,9 @@ class BlogOverview extends StatelessWidget{
                         return BlogCard(
                           blog: blog, 
                           dateFormatter: DateFormat('dd.MM.yyyy'), 
-                          onLikeToggle: () => viewModel.toggleLike(blog.id),
+                          onLikeToggle: () => viewModel.toggleLike(blog.id, !blog.isLikedByMe),
                           onTap: () => _onBlogTap(context, blog.id),
+                          isAutenticated: viewModel.isAuthenticated,
                         );
                       },
                     ),

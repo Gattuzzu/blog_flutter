@@ -97,9 +97,17 @@ class BlogDetailViewModel extends ChangeNotifier {
     notifyListeners();  // Löst Rebuild aus
   }
 
-  Future<void> toggleLike(String blogId) async {
-    await blogRepository.toggleLikeInfo(blogId);
-    await readBlogWithLoadingState(blogId);
+  Future<void> toggleLike(String blogId, bool like) async {
+    await blogRepository.toggleLikeInfo(blogId, like);
+
+    if (_state case BlogDetailLoaded actState){
+      _state = BlogDetailLikeUpdating(actState.blog);
+      notifyListeners();  // Löst Rebuild aus
+      await _readBlog(blogId); // Löst Rebuild aus
+
+    } else{
+      await readBlogWithLoadingState(blogId);
+    }
   }
 
     Future<void> onUpdate(String blogId, BuildContext context) async {

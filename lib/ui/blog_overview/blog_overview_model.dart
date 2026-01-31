@@ -59,8 +59,8 @@ class BlogOverviewModel extends ChangeNotifier {
     notifyListeners();  // Löst Rebuild aus
   }
 
-  Future<void> toggleLike(String blogId) async {
-    await blogRepository.toggleLikeInfo(blogId);
+  Future<void> toggleLike(String blogId, bool like) async {
+    await blogRepository.toggleLikeInfo(blogId, like);
     await readBlogsWithLoadingState();
   }
 }

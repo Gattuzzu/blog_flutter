@@ -30,6 +30,10 @@ class BlogDetailLoaded extends BlogDetailAtLeastOnceLoaded {
   BlogDetailLoaded(super.blog);
 }
 
+class BlogDetailLikeUpdating extends BlogDetailAtLeastOnceLoaded {
+  BlogDetailLikeUpdating(super.blog);
+}
+
 class BlogDetailEditing extends BlogDetailAtLeastOnceLoaded {
   final BlogField field;
   BlogDetailEditing(this.field, super.blog);
