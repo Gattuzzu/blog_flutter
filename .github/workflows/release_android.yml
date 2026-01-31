@@ -9,7 +9,7 @@ on:
     inputs:
       play_store_track:
         description: 'Wähle den Ziel-Track im Play Store'
-        required: true
+        required: false
         default: 'alpha'
         type: choice
         options:
@@ -83,5 +83,5 @@ jobs:
           # Sicherstellen, dass der Pfad exakt stimmt
           releaseFiles: build/app/outputs/bundle/productionRelease/app-production-release.aab
           
-          track: ${{ github.event.inputs.play_store_track }}
+          track: ${{ github.event.inputs.play_store_track || 'alpha'}}
           status: completed # wenn die App in der PlayConsole fertig eingerichtet ist, kann dies auf "completed" umgestellt werden.
