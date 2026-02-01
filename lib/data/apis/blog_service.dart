@@ -112,7 +112,7 @@ class BlogService {
       })
     );
 
-    if(response.statusCode == 200){
+    if(response.statusCode == 204){
       // 1. Das gesamte JSON-Objekt als Map dekodieren
       final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
